@@ -603,7 +603,9 @@ export class ToolBarComponent implements OnInit, AfterViewInit {
 		// check if F1 key is pressed
 		if ( event.key !== 'F1' ) return;
 
-		// TODO: open help section for that tool
+		event.preventDefault();
+		const helpUrl = `https://docs.truevision.ai/tools/${this.mouseOnTool.action}`;
+		window.open( helpUrl, '_blank' );
 	}
 
 	setToolType ( type: ToolType ): void {

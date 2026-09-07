@@ -93,9 +93,11 @@ export class WorldSettingInspectorComponent extends BaseInspector implements OnI
 
 		try {
 
-			// TODO: add undo/redo support
-			this.data.positionOffset.x = parseFloat( value.x ) ?? 0;
-			this.data.positionOffset.y = parseFloat( value.y ) ?? 0;
+			const newOffset = this.data.positionOffset.clone();
+			newOffset.x = parseFloat( value.x ) ?? 0;
+			newOffset.y = parseFloat( value.y ) ?? 0;
+
+			CommandHistory.execute( new SetValueCommand( this.data, 'positionOffset', newOffset, this.data.positionOffset ) );
 
 		} catch ( e ) {
 

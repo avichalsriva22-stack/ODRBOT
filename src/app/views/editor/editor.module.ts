@@ -27,6 +27,7 @@ import { SatPopoverModule } from '@ncstate/sat-popover';
 import { TranslateModule } from '@ngx-translate/core';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { ScenarioModule } from '../../scenario/scenario.module';
+import { AiModule } from '../../ai/ai.module';
 import { SharedModule } from '../shared/shared.module';
 import { ConsoleComponent } from './console/console.component';
 import { ExportGlbDialog } from './dialogs/export-glb-dialog/export-glb-dialog.component';
@@ -104,6 +105,7 @@ import { ObjectInspectorComponent } from "../inspectors/object-inspector/object-
 		MatIconModule,
 		MatTooltipModule,
 		ScenarioModule,
+		AiModule,
 	],
 	exports: [
 		PlayerBarComponent,

@@ -1,0 +1,63 @@
+.setting-section {
+	margin: 16px 0;
+	
+	h3 {
+		margin: 0 0 4px 0;
+		font-size: 14px;
+		font-weight: 500;
+	}
+	
+	.description {
+		font-size: 12px;
+		color: #999;
+		margin: 0 0 12px 0;
+	}
+}
+
+.key-status {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px;
+	background: #4CAF5011;
+	border: 1px solid #4CAF5044;
+	border-radius: 4px;
+	
+	.success-icon {
+		color: #4CAF50;
+	}
+	span {
+		flex: 1;
+		font-size: 13px;
+	}
+}
+
+.key-input-row {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	
+	.flex-field {
+		flex: 1;
+	}
+	
+	::ng-deep .mat-form-field-wrapper {
+		padding-bottom: 0;
+	}
+}
+
+.full-width {
+	width: 100%;
+}
+
+mat-divider {
+	margin: 16px 0;
+}
+
+.footnote {
+	font-size: 11px;
+	color: #777;
+	text-align: center;
+	padding: 12px;
+	border-top: 1px solid rgba(255, 255, 255, 0.12);
+}

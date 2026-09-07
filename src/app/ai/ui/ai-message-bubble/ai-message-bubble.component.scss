@@ -1,0 +1,109 @@
+:host {
+	display: block;
+	width: 100%;
+}
+
+.bubble-container {
+	display: flex;
+	gap: 12px;
+	width: 100%;
+	
+	&.user {
+		flex-direction: row-reverse;
+		
+		.content-wrapper {
+			align-items: flex-end;
+		}
+		
+		.message-content {
+			background: #3f51b5; /* Accent color */
+			color: white;
+			border-radius: 12px 12px 0 12px;
+		}
+	}
+	
+	&.assistant {
+		.message-content {
+			background: #444; /* Neutral background */
+			color: #eee;
+			border-radius: 12px 12px 12px 0;
+		}
+	}
+}
+
+.avatar {
+	width: 32px;
+	height: 32px;
+	background: #555;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	
+	mat-icon {
+		font-size: 20px;
+		width: 20px;
+		height: 20px;
+		color: #ddd;
+	}
+}
+
+.content-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-width: 85%;
+	width: 100%;
+}
+
+.message-content {
+	padding: 10px 14px;
+	line-height: 1.5;
+	word-break: break-word;
+	font-size: 13px;
+
+	::ng-deep {
+		strong { font-weight: 600; }
+		em { font-style: italic; }
+		code { 
+			background: rgba(0,0,0,0.3);
+			padding: 2px 4px;
+			border-radius: 4px;
+			font-family: monospace;
+			font-size: 12px;
+		}
+		ul, ol {
+			margin: 4px 0;
+			padding-left: 20px;
+		}
+		li {
+			margin-bottom: 2px;
+		}
+	}
+}
+
+.blinking-cursor {
+	display: inline-block;
+	width: 8px;
+	height: 14px;
+	background-color: currentColor;
+	vertical-align: middle;
+	animation: blink 1s step-end infinite;
+	margin-left: 4px;
+}
+
+@keyframes blink {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0; }
+}
+
+.tool-calls {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	width: 100%;
+}
+
+.error-content { display: flex; align-items: center; gap: 8px; color: #f44336; background: rgba(244, 67, 54, 0.1); padding: 8px 12px; border-radius: 4px; margin-top: 4px; }
+.error-text { font-size: 0.9em; }

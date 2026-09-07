@@ -22,6 +22,10 @@
 			color="accent">New
 		</mat-chip>
 	</button>
+	<button *ngIf="aiFeatureEnabled" (click)="toggleAiPanel.emit()" mat-button>
+		<mat-icon style="vertical-align: middle; margin-right: 4px; font-size: 20px; width: 20px; height: 20px;">smart_toy</mat-icon>
+		AI Assistant
+	</button>
 
 	<mat-menu #fileMenu="matMenu">
 		<button (click)="onNewFile()"

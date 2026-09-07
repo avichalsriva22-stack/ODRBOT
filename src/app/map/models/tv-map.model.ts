@@ -174,6 +174,7 @@ export class TvMap {
 	addRoad ( road: TvRoad ): void {
 
 		if ( this.roads.has( road.id ) ) {
+			if (this.roads.get(road.id) === road) return;
 			throw new DuplicateKeyException( `Road with id ${ road.id } already exists` );
 		}
 
@@ -256,6 +257,7 @@ export class TvMap {
 	addJunction ( junction: TvJunction ): void {
 
 		if ( this.junctions.has( junction.id ) ) {
+			if (this.junctions.get(junction.id) === junction) return;
 			throw new DuplicateKeyException( `Junction with id ${ junction.id } already exists` );
 		}
 

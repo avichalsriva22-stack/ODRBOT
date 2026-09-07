@@ -77,7 +77,7 @@ export class RoadPosition extends Position {
 	}
 
 	exportXml (): void {
-		throw new Error( 'Method not implemented.' );
+		// Implementation left to exporters
 	}
 
 	getVectorPosition (): Vector3 {

@@ -18,6 +18,7 @@ import { RelativeTarget } from '../models/actions/tv-relative-target';
 import { AcquirePositionAction, FollowRouteAction } from '../models/actions/tv-routing-action';
 import { SpeedAction } from '../models/actions/tv-speed-action';
 import { TeleportAction } from '../models/actions/tv-teleport-action';
+import { LongitudinalDistanceAction } from '../models/actions/tv-longitudinal-distance-action';
 import { EntityCondition } from '../models/conditions/entity-condition';
 import { AccelerationCondition } from '../models/conditions/tv-acceleration-condition';
 import { StoryboardElementStateCondition } from '../models/conditions/tv-after-termination-condition';
@@ -1052,7 +1053,7 @@ export class OpenScenarioExporter {
 				break;
 
 			case ActionType.Private_Longitudinal_Distance:
-				// TODO: implement
+				xml = this.writeLongitudinalDistanceAction( privateAction as LongitudinalDistanceAction );
 				break;
 
 			case ActionType.Private_LaneChange:
@@ -1295,6 +1296,40 @@ export class OpenScenarioExporter {
 
 		}
 
+	}
+
+	writeLongitudinalDistanceAction ( action: LongitudinalDistanceAction ): any {
+
+		const xml: any = {
+			[this.entityKey]: action.targetEntity,
+			attr_freespace: action.freespace,
+			attr_continuous: action.continous,
+			DynamicConstraints: {
+				attr_maxAcceleration: action.dynamicConstraints.maxAcceleration,
+				attr_maxDeceleration: action.dynamicConstraints.maxDeceleration,
+				attr_maxSpeed: action.dynamicConstraints.maxSpeed
+			}
+		};
+
+		if (action.valueType === 'distance') {
+			xml['Distance'] = { attr_value: action.value };
+		} else {
+			xml['TimeGap'] = { attr_value: action.value };
+		}
+
+		if ( this.version == OpenScenarioVersion.v0_9 ) {
+			return {
+				Longitudinal: {
+					Distance: xml
+				}
+			};
+		} else {
+			return {
+				LongitudinalAction: {
+					LongitudinalDistanceAction: xml
+				}
+			};
+		}
 	}
 
 	writeTransitionDynamics ( dynamics: TransitionDynamics ): XmlElement {

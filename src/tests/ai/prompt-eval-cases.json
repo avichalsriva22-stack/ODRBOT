@@ -1,0 +1,127 @@
+[
+	{
+		"prompt": "Set the width of lane -2 on road 5 to 3.5 meters",
+		"mapFixture": "basic-road",
+		"expectedToolCalls": ["set_lane_width"]
+	},
+	{
+		"prompt": "Set the height of lane 1 on road 5 to 0.1 meters",
+		"mapFixture": "basic-road",
+		"expectedToolCalls": ["set_lane_height"]
+	},
+	{
+		"prompt": "Change the lane marking of lane -1 on road 5 to solid line",
+		"mapFixture": "basic-road",
+		"expectedToolCalls": ["set_lane_marking"]
+	},
+	{
+		"prompt": "Add a new driving lane on the left side of road 5",
+		"mapFixture": "basic-road",
+		"expectedToolCalls": ["add_lane"]
+	},
+	{
+		"prompt": "Remove lane -2 from road 5",
+		"mapFixture": "basic-road",
+		"expectedToolCalls": ["remove_lane"]
+	},
+	{
+		"prompt": "Set the speed limit of road 5 to 60 km/h",
+		"mapFixture": "basic-road",
+		"expectedToolCalls": ["set_road_speed"]
+	},
+	{
+		"prompt": "Change the type of road 5 to motorway",
+		"mapFixture": "basic-road",
+		"expectedToolCalls": ["set_road_type"]
+	},
+	{
+		"prompt": "Set the elevation of road 5 to 2.5 meters at the start",
+		"mapFixture": "basic-road",
+		"expectedToolCalls": ["set_road_elevation"]
+	},
+	{
+		"prompt": "Apply a super elevation of 0.05 radians to road 5",
+		"mapFixture": "basic-road",
+		"expectedToolCalls": ["set_road_super_elevation"]
+	},
+	{
+		"prompt": "Rename road 5 to 'Main Street'",
+		"mapFixture": "basic-road",
+		"expectedToolCalls": ["rename_object"]
+	},
+	{
+		"prompt": "Make it wider to 4 meters",
+		"mapFixture": "selected-lane-minus-two",
+		"expectedToolCalls": ["set_lane_width"]
+	},
+	{
+		"prompt": "Lower its height to 0",
+		"mapFixture": "selected-lane-one",
+		"expectedToolCalls": ["set_lane_height"]
+	},
+	{
+		"prompt": "Make this lane's marking broken",
+		"mapFixture": "selected-lane-minus-one",
+		"expectedToolCalls": ["set_lane_marking"]
+	},
+	{
+		"prompt": "Add a lane next to it",
+		"mapFixture": "selected-road-five",
+		"expectedToolCalls": ["add_lane"]
+	},
+	{
+		"prompt": "Delete this lane",
+		"mapFixture": "selected-lane-minus-two",
+		"expectedToolCalls": ["remove_lane"]
+	},
+	{
+		"prompt": "Reduce the speed of this road to 30",
+		"mapFixture": "selected-road-five",
+		"expectedToolCalls": ["set_road_speed"]
+	},
+	{
+		"prompt": "Make this a town road",
+		"mapFixture": "selected-road-five",
+		"expectedToolCalls": ["set_road_type"]
+	},
+	{
+		"prompt": "Raise this road's elevation by 1 meter",
+		"mapFixture": "selected-road-five",
+		"expectedToolCalls": ["set_road_elevation"]
+	},
+	{
+		"prompt": "Give it a super elevation of 0.02",
+		"mapFixture": "selected-road-five",
+		"expectedToolCalls": ["set_road_super_elevation"]
+	},
+	{
+		"prompt": "Call this road 'Highway 1'",
+		"mapFixture": "selected-road-five",
+		"expectedToolCalls": ["rename_object"]
+	},
+	{
+		"prompt": "Can you delete it?",
+		"mapFixture": "empty",
+		"expectedToolCalls": []
+	},
+	{
+		"prompt": "Make the lane 3 meters wide",
+		"mapFixture": "selected-road-no-lane",
+		"expectedToolCalls": []
+	},
+	{
+		"prompt": "Change the speed",
+		"mapFixture": "selected-road-five",
+		"expectedToolCalls": []
+	},
+	{
+		"prompt": "Generate a city with 50 interconnected roads",
+		"mapFixture": "empty",
+		"expectedToolCalls": []
+	},
+	{
+		"prompt": "Build an entire highway network",
+		"mapFixture": "empty",
+		"expectedToolCalls": []
+	}
+]

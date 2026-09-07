@@ -596,9 +596,7 @@ export class Maths {
 	 * @param C center of arc/circle
 	 * @param R radius of arc/circle
 	 */
-	static getLineArcIntersections ( A: Vector3, B: Vector3, C: Vector3, R: number ): Vector3[] {
-
-		// TODO: need fix, arc theta check is not being done
+	static getLineArcIntersections ( A: Vector3, B: Vector3, C: Vector3, R: number, startAngle?: number, endAngle?: number ): Vector3[] {
 
 		// https://revisionmaths.com/advanced-level-maths-revision/pure-maths/geometry/equation-circle
 		// https://stackoverflow.com/a/1088058
@@ -658,7 +656,7 @@ export class Maths {
 				0
 			);
 
-			const intersections = [];
+			let intersections = [];
 
 			const F_online = Maths.isPointOnLine( A, B, F );
 
@@ -668,14 +666,33 @@ export class Maths {
 
 			if ( G_online ) intersections.push( G );
 
-			return intersections;
+			if ( startAngle !== undefined && endAngle !== undefined ) {
+				intersections = intersections.filter( p => {
+					let angle = Math.atan2( p.y - C.y, p.x - C.x );
+					if ( angle < 0 ) angle += 2 * Math.PI;
+					let s = startAngle < 0 ? startAngle + 2 * Math.PI : startAngle;
+					let e = endAngle < 0 ? endAngle + 2 * Math.PI : endAngle;
+					return s < e ? ( angle >= s && angle <= e ) : ( angle >= s || angle <= e );
+				} );
+			}
 
-			// const isXOnLine = Maths.isPointOnLine( A, B, new Vector3( 0, 10, 0 ) );
+			return intersections;
 
 		} else if ( Maths.approxEquals( LEC, R ) ) {
 
-			// TODO: Return tanget also in future
 			// tangent point to circle is E
+			if ( Maths.isPointOnLine( A, B, E ) ) {
+				if ( startAngle !== undefined && endAngle !== undefined ) {
+					let angle = Math.atan2( E.y - C.y, E.x - C.x );
+					if ( angle < 0 ) angle += 2 * Math.PI;
+					let s = startAngle < 0 ? startAngle + 2 * Math.PI : startAngle;
+					let e = endAngle < 0 ? endAngle + 2 * Math.PI : endAngle;
+					const inBounds = s < e ? ( angle >= s && angle <= e ) : ( angle >= s || angle <= e );
+					if ( inBounds ) return [ E ];
+					return [];
+				}
+				return [ E ];
+			}
 
 			return [];
 
@@ -739,5 +756,45 @@ export class Maths {
 
 		return new Box3( min, max );
 
+	}
+
+	static segsIntersect ( a1: { x: number; y: number }, a2: { x: number; y: number }, b1: { x: number; y: number }, b2: { x: number; y: number }, eps = 1e-6 ): boolean {
+		const orient = ( p: { x: number; y: number }, q: { x: number; y: number }, r: { x: number; y: number } ) => ( q.x - p.x ) * ( r.y - p.y ) - ( q.y - p.y ) * ( r.x - p.x );
+
+		const o1 = orient( a1, a2, b1 );
+		const o2 = orient( a1, a2, b2 );
+		const o3 = orient( b1, b2, a1 );
+		const o4 = orient( b1, b2, a2 );
+
+		if ( ( o1 > eps && o2 < -eps || o1 < -eps && o2 > eps ) &&
+			( o3 > eps && o4 < -eps || o3 < -eps && o4 > eps ) ) return true;
+
+		const onSeg = ( p: { x: number; y: number }, q: { x: number; y: number }, r: { x: number; y: number } ) =>
+			Math.min( p.x, r.x ) - eps <= q.x && q.x <= Math.max( p.x, r.x ) + eps &&
+			Math.min( p.y, r.y ) - eps <= q.y && q.y <= Math.max( p.y, r.y ) + eps;
+
+		if ( Math.abs( o1 ) <= eps && onSeg( a1, b1, a2 ) ) return true;
+		if ( Math.abs( o2 ) <= eps && onSeg( a1, b2, a2 ) ) return true;
+		if ( Math.abs( o3 ) <= eps && onSeg( b1, a1, b2 ) ) return true;
+		if ( Math.abs( o4 ) <= eps && onSeg( b1, a2, b2 ) ) return true;
+
+		return false;
+	}
+
+	static isSimplePolygon ( points: { x: number; y: number }[], eps = 1e-6 ): boolean {
+		// assumes closed ring [0..n-1] with points[0] ~= points[n-1]
+		const n = points.length - 1;
+		if ( n < 3 ) return false;
+		for ( let i = 0; i < n; i++ ) {
+			const a1 = points[ i ], a2 = points[ ( i + 1 ) % points.length ];
+			for ( let j = i + 1; j < n; j++ ) {
+				const b1 = points[ j ], b2 = points[ ( j + 1 ) % points.length ];
+				// skip adjacency: edges that share a vertex or are the same edge
+				const adj = ( j === i ) || ( j === i - 1 ) || ( j === i + 1 ) || ( i === 0 && j === n - 1 );
+				if ( adj ) continue;
+				if ( this.segsIntersect( a1, a2, b1, b2, eps ) ) return false;
+			}
+		}
+		return true;
 	}
 }

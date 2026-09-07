@@ -1,0 +1,42 @@
+<div class="card-container" [ngClass]="record.status">
+	<div class="card-header">
+		<mat-icon class="category-icon">{{ categoryIcon }}</mat-icon>
+		<span class="tool-name">{{ humanizedName }}</span>
+		
+		<div class="status-indicator">
+			<ng-container [ngSwitch]="record.status">
+				<mat-icon *ngSwitchCase="'succeeded'" class="success-icon">check_circle</mat-icon>
+				<mat-icon *ngSwitchCase="'failed'" class="error-icon">error</mat-icon>
+				<mat-icon *ngSwitchCase="'rejected'" class="rejected-icon">cancel</mat-icon>
+				<div *ngSwitchCase="'pending_preview'" class="spinner-small"></div>
+				<div *ngSwitchCase="'pending_confirmation'" class="spinner-small"></div>
+				<div *ngSwitchCase="'running'" class="spinner-small"></div>
+			</ng-container>
+		</div>
+	</div>
+
+	<div class="card-body">
+		<ng-container [ngSwitch]="record.status">
+			<div *ngSwitchCase="'pending_preview'" class="status-text">Preparing preview…</div>
+			
+			<div *ngSwitchCase="'pending_confirmation'" class="confirmation-area">
+				<app-ai-diff-preview *ngIf="record.preview" [preview]="record.preview"></app-ai-diff-preview>
+				<div class="actions">
+					<button mat-stroked-button (click)="onReject()">Cancel</button>
+					<button mat-flat-button color="primary" (click)="onConfirm()">Confirm</button>
+				</div>
+			</div>
+			
+			<div *ngSwitchCase="'running'" class="status-text">Applying…</div>
+			
+			<div *ngSwitchCase="'succeeded'" class="success-area">
+				<div class="summary">{{ record.summary }}</div>
+				<button mat-button class="undo-btn" (click)="undoAction()" *ngIf="canUndo()">Undo this</button>
+			</div>
+			
+			<div *ngSwitchCase="'failed'" class="error-text">{{ record.errorMessage }}</div>
+			
+			<div *ngSwitchCase="'rejected'" class="status-text">Not applied.</div>
+		</ng-container>
+	</div>
+</div>

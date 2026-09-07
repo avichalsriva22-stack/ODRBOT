@@ -25,7 +25,7 @@ export class ExtrudeService {
 	// 	.lineTo( -sqLength, -sqWidth )
 	// 	.lineTo( -sqLength, 0 )
 	// 	.lineTo( 0, 0 );
-	buildShape ( polyline: TvObjectPolyline ): Shape {
+	buildShape ( roadObject: TvRoadObject, polyline: TvObjectPolyline ): Shape {
 
 		const points: Vector3[] = [];
 
@@ -33,7 +33,11 @@ export class ExtrudeService {
 
 			if ( vertex instanceof TvObjectVertexRoad ) {
 
-				// TODO: Implement this
+				// Convert global road coordinates (s, t, dz) to object-local coordinates (u, v, z)
+				const u = vertex.s - roadObject.s;
+				const v = vertex.t - roadObject.t;
+				const z = vertex.dz;
+				points.push( new Vector3( u, v, z ) );
 
 			} else if ( vertex instanceof TvObjectVertexLocal ) {
 

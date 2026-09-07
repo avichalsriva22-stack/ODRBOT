@@ -81,9 +81,9 @@ export class TrafficSignalControllerCondition extends ValueCondition {
 	 * 					 The available phases are defined in type RoadNetwork under the property trafficSignalControllers.
 	 * @param attr_trafficSignalControllerRef
 	 */
-	constructor ( attr_phase: any, attr_trafficSignalControllerRef: any ) {
+	constructor ( public phase: string, public trafficSignalControllerRef: string ) {
 		super();
-		TvConsole.warn( 'TrafficSignalControllerCondition is not implemented' );
+		// Traffic signal controller dynamic states are not fully modeled in the editor
 	}
 
 	hasPassed (): boolean {

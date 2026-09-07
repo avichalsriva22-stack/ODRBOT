@@ -533,7 +533,7 @@ export class TvLaneSection {
 
 		for ( let [ id, lane ] of this.lanesMap ) {
 
-			const otherLane = otherLaneSection.getLaneById( id );
+			const otherLane = otherLaneSection.lanes.get( id );
 
 			if ( !otherLane ) return false;
 
@@ -568,7 +568,7 @@ export class TvLaneSection {
 
 			for ( let id = 1; id <= leftLanes.length; id++ ) {
 
-				const lane = this.getLaneById( id );
+				const lane = this.lanes.get( id );
 
 				if ( lane ) {
 
@@ -599,7 +599,7 @@ export class TvLaneSection {
 
 			for ( let id = 1; id <= rightLanes.length; id++ ) {
 
-				const lane = this.getLaneById( -id );
+				const lane = this.lanes.get( -id );
 
 				if ( lane ) {
 

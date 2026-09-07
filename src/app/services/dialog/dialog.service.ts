@@ -169,19 +169,49 @@ export class WebDialogProvider implements IDialogProvider {
 
 	}
 
-	openDialog ( options: any ): Promise<any> {
+	openDialog ( options: any ): Promise<OpenDialogReturnValue> {
 
-		// TODO: Implement this
-		console.warn( 'WebDialogProvider.openDialog not implemented' );
-		return Promise.resolve( { canceled: true, filePaths: [] } );
+		return new Promise( ( resolve ) => {
+			const input = document.createElement( 'input' );
+			input.type = 'file';
+			input.multiple = options?.properties?.includes( 'multiSelections' ) || false;
+			
+			if ( options?.extensions ) {
+				input.accept = options.extensions.map( ( ext: string ) => `.${ext.replace( '.', '' )}` ).join( ',' );
+			} else if ( options?.filters ) {
+				const extensions = options.filters.flatMap( ( f: any ) => f.extensions ).map( ( ext: string ) => `.${ext}` );
+				input.accept = extensions.join( ',' );
+			}
+
+			input.onchange = ( e: any ) => {
+				const files = Array.from( e.target.files ) as File[];
+				const filePaths = files.map( ( f: File ) => f.name ); 
+				
+				resolve( {
+					canceled: false,
+					filePaths: filePaths
+				} );
+			};
+
+			input.oncancel = () => {
+				resolve( { canceled: true, filePaths: [] } );
+			};
+
+			input.click();
+		} );
 
 	}
 
-	saveDialog ( options: any ): Promise<any> {
+	saveDialog ( options: any ): Promise<SaveDialogReturnValue> {
 
-		// TODO: Implement this
-		console.warn( 'WebDialogProvider.openDialog not implemented' );
-		return Promise.resolve( { canceled: true, filePaths: [] } );
+		return new Promise( ( resolve ) => {
+			const filename = window.prompt( 'Save file as:', options?.defaultPath || 'untitled' );
+			if ( filename ) {
+				resolve( { canceled: false, filePath: filename } );
+			} else {
+				resolve( { canceled: true, filePath: '' } );
+			}
+		} );
 
 	}
 

@@ -1,0 +1,44 @@
+<div class="plan-review-card">
+	<div class="plan-header">
+		<mat-icon class="plan-icon">assignment</mat-icon>
+		<div class="plan-header-text">
+			<span class="plan-title">📋 Plan: {{ plan.goalText }}</span>
+		</div>
+	</div>
+
+	<div class="plan-summary" *ngIf="plan['summary']">
+		<p>{{ plan['summary'] }}</p>
+	</div>
+
+	<div class="plan-expand-toggle" (click)="toggleExpand()">
+		<mat-icon>{{ expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+		<span>{{ plan.steps.length }} steps</span>
+	</div>
+
+	<div class="plan-steps" *ngIf="expanded">
+		<div class="plan-step" *ngFor="let step of plan.steps">
+			<span class="step-index">{{ step.index }}</span>
+			<span class="step-tool">
+				<mat-icon class="step-icon">build</mat-icon>
+				{{ humanizeTool(step.toolName) }}
+			</span>
+			<span class="step-description">{{ step.description }}</span>
+			<mat-icon
+				class="unresolved-icon"
+				*ngIf="isUnresolved(step)"
+				title="resolved automatically during execution">
+				bolt
+			</mat-icon>
+		</div>
+	</div>
+
+	<div class="plan-actions" *ngIf="plan.status === 'awaiting_review'">
+		<button mat-stroked-button color="warn" (click)="onReject()">Reject</button>
+		<button mat-stroked-button (click)="onEdit()">Edit...</button>
+		<button mat-flat-button color="primary" (click)="onRunPlan()">Run Plan</button>
+	</div>
+
+	<div class="plan-aborted-notice" *ngIf="plan.status === 'aborted'">
+		<mat-icon>cancel</mat-icon> Plan rejected
+	</div>
+</div>

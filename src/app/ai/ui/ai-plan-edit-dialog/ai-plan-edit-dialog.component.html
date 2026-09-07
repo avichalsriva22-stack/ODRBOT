@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>Edit Plan</h2>
+
+<mat-dialog-content>
+	<p class="edit-hint">You can remove steps or edit their argument values. Changes take effect when you click Save.</p>
+
+	<div class="step-edit-list">
+		<div class="step-edit-row" *ngFor="let step of plan.steps">
+			<div class="step-edit-header">
+				<span class="step-num">{{ step.index }}</span>
+				<span class="step-tool-name">{{ humanizeTool(step.toolName) }}</span>
+				<span class="step-desc">{{ step.description }}</span>
+				<button mat-icon-button color="warn" (click)="onRemoveStep(step)" title="Remove step">
+					<mat-icon>delete</mat-icon>
+				</button>
+			</div>
+			<div class="step-args-editor">
+				<textarea
+					[(ngModel)]="editingArgs[step.id]"
+					(blur)="applyArgEdit(step)"
+					rows="4"
+					class="args-textarea">
+				</textarea>
+			</div>
+		</div>
+	</div>
+
+	<mat-divider></mat-divider>
+
+	<div class="revise-section">
+		<p class="revise-label">Ask AI to revise (optional):</p>
+		<textarea
+			[(ngModel)]="reviseText"
+			placeholder="e.g. 'Make the roads 40m instead of 30m'"
+			rows="2"
+			class="revise-textarea">
+		</textarea>
+		<p class="revise-hint">This will generate a new plan replacing the current one.</p>
+	</div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+	<button mat-button (click)="onCancel()">Cancel</button>
+	<button mat-flat-button color="primary" (click)="onSave()">Save</button>
+</mat-dialog-actions>

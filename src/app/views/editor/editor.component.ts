@@ -14,6 +14,7 @@ import { ShortcutService } from 'app/services/editor/shortcut.service';
 import { ToolManager } from "../../managers/tool-manager";
 import { QuesionsDialogComponent } from '../sessions/questions/questions-dialog.component';
 import { ProfileService } from 'app/services/profile.service';
+import { AiFeatureFlag } from '../../ai/models/ai-feature-flag';
 
 @Component( {
 	selector: 'app-editor',
@@ -22,7 +23,9 @@ import { ProfileService } from 'app/services/profile.service';
 } )
 export class EditorComponent implements OnInit, AfterContentInit {
 
-	consoleLabel = 'Console';
+	consoleLabel = 'Console (0)';
+	aiFeatureEnabled = AiFeatureFlag.enabled;
+	aiPanelExpanded = true;
 
 	get isProduction (): boolean {
 		return true; // Environment.production
@@ -69,21 +72,22 @@ export class EditorComponent implements OnInit, AfterContentInit {
 		private profileService: ProfileService,
 	) {
 
-		TvConsole.logsChanged.subscribe( () => this.onLogsChanged() );
-
 	}
 
 	onLogsChanged (): void {
 
-		this.consoleLabel = `Console (${ TvConsole.logs.length })`;
-
-		this.changeDetectorRef.detectChanges();
+		setTimeout(() => {
+			this.consoleLabel = `Console (${ TvConsole.logs.length })`;
+			this.changeDetectorRef.detectChanges();
+		});
 
 	}
 
 	ngOnInit (): void {
 
 		this.shortcutService.init();
+		
+		TvConsole.logsChanged.subscribe( () => this.onLogsChanged() );
 
 		this.onEditorOpened();
 	}

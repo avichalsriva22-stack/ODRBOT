@@ -47,12 +47,12 @@ export class JoinNode {
 
 		if ( intersectionPoint ) {
 
-			Debug.log( 'The roads will intersect at:', intersectionPoint );
+			console.log( 'The roads will intersect at:', intersectionPoint );
 
 		}
 
-		Debug.log( 'firstDistance', firstDistance );
-		Debug.log( 'secondDistance', secondDistance );
+		console.log( 'firstDistance', firstDistance );
+		console.log( 'secondDistance', secondDistance );
 
 	}
 
@@ -94,11 +94,11 @@ export class JoinNode {
 
 		if ( roadsAreParallel ) {
 
-			Debug.log( 'The roads are parallel and will not intersect.' );
+			console.log( 'The roads are parallel and will not intersect.' );
 
 		} else {
 
-			Debug.log( 'The roads will intersect at some point.' );
+			console.log( 'The roads will intersect at some point.' );
 
 		}
 	}
@@ -154,9 +154,9 @@ export class JoinNode {
 		const intersectionInDirectionB = Maths.isPointOnLine( b.toVector3(), b.moveForward( 1000 ).toVector3(), intersectionPoint );
 
 		if ( intersectionInDirectionA && intersectionInDirectionB ) {
-			Debug.log( 'The intersection point follows the direction of both points:', intersectionPoint );
+			console.log( 'The intersection point follows the direction of both points:', intersectionPoint );
 		} else {
-			Debug.log( 'The intersection point does not follow the direction of one or both points.' );
+			console.log( 'The intersection point does not follow the direction of one or both points.' );
 		}
 	}
 }

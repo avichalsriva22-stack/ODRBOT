@@ -1,0 +1,76 @@
+<h2 mat-dialog-title>AI Settings</h2>
+<mat-dialog-content>
+	<div class="setting-section">
+		<h3>API Provider</h3>
+		<mat-form-field appearance="outline" class="full-width">
+			<mat-select [(ngModel)]="provider" (ngModelChange)="onProviderChange($event)">
+				<mat-option value="anthropic">Anthropic (Paid)</mat-option>
+				<mat-option value="openrouter">OpenRouter (Free/Custom Models)</mat-option>
+			</mat-select>
+		</mat-form-field>
+	</div>
+
+	<mat-divider></mat-divider>
+
+	<div class="setting-section">
+		<h3>API Key</h3>
+		<p class="description">Required to connect to {{provider === 'openrouter' ? 'OpenRouter' : 'Anthropic'}}.</p>
+		
+		<div class="key-status" *ngIf="hasSavedKey">
+			<mat-icon class="success-icon">check_circle</mat-icon>
+			<span>API key is securely stored.</span>
+			<button mat-button color="warn" (click)="clearKey()">Clear</button>
+		</div>
+
+		<div class="key-input-row" *ngIf="!hasSavedKey">
+			<mat-form-field appearance="outline" class="flex-field">
+				<mat-label>{{provider === 'openrouter' ? 'OpenRouter' : 'Anthropic'}} API Key</mat-label>
+				<input matInput [type]="hideKey ? 'password' : 'text'" [(ngModel)]="apiKeyInput">
+				<button mat-icon-button matSuffix (click)="hideKey = !hideKey" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideKey">
+					<mat-icon>{{hideKey ? 'visibility_off' : 'visibility'}}</mat-icon>
+				</button>
+			</mat-form-field>
+			<button mat-flat-button color="primary" [disabled]="!apiKeyInput" (click)="saveKey()">Save</button>
+		</div>
+	</div>
+
+	<mat-divider></mat-divider>
+
+	<div class="setting-section">
+		<h3>Model Selection</h3>
+		
+		<!-- Anthropic Model Selection -->
+		<mat-form-field appearance="outline" class="full-width" *ngIf="provider === 'anthropic'">
+			<mat-select [(ngModel)]="selectedModel" (ngModelChange)="onModelChange($event)">
+				<mat-option *ngFor="let m of models" [value]="m.id">{{ m.label }}</mat-option>
+			</mat-select>
+		</mat-form-field>
+
+		<!-- OpenRouter Model Selection -->
+		<div *ngIf="provider === 'openrouter'">
+			<mat-form-field appearance="outline" class="full-width">
+				<mat-label>OpenRouter Model ID</mat-label>
+				<input matInput type="text" [(ngModel)]="openRouterModel" (ngModelChange)="onOpenRouterModelChange($event)" placeholder="e.g. google/gemini-2.5-flash:free">
+			</mat-form-field>
+			<p class="description" style="margin-top: -10px;">
+				<small>We recommend <strong>meta-llama/llama-3.1-70b-instruct:free</strong> or <strong>google/gemini-2.5-flash:free</strong> as they support tool calling reliably.</small>
+			</p>
+		</div>
+	</div>
+
+	<mat-divider></mat-divider>
+
+	<div class="setting-section">
+		<mat-slide-toggle [(ngModel)]="advancedEnabled" (ngModelChange)="onAdvancedChange($event)" color="primary">
+			Enable advanced tools (create roads, junctions, roundabouts)
+		</mat-slide-toggle>
+	</div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+	<button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>
+
+<div class="footnote">
+	Your API key is stored encrypted on this device and is only used to talk to Anthropic's API directly from this app.
+</div>

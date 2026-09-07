@@ -267,10 +267,8 @@ export class ViewportComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	onMouseMove ( event: MouseEvent ): void {
 
-		// TODO: implement GPU picking
-		// https://threejs.org/examples/webgl_interactive_cubes_gpu.html
-		// https://stackoverflow.com/questions/48691642/three-js-raycaster-find-intersections-as-mouse-moves
-		// https://github.com/brianxu/GPUPicker
+		// CPU raycasting with throttle is currently used.
+		// For very large scenes, consider integrating 'three-mesh-bvh' instead of GPU picking.
 
 		this.updateMousePosition( event );
 

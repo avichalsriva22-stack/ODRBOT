@@ -60,10 +60,9 @@ export class JunctionManager {
 
 		for ( const connection of connections ) {
 
-			// TODO: use road manager
 			if ( !this.mapService.map.getRoads().includes( connection.connectingRoad ) ) {
 
-				this.roadService.add( connection.connectingRoad );
+				this.roadManager.addRoad( connection.connectingRoad );
 
 			} else {
 
@@ -195,10 +194,9 @@ export class JunctionManager {
 
 		MapEvents.removeMesh.emit( junction );
 
-		// TODO: we should check the remaing spline count instead of initial
-		if ( incomingSplines.length > 2 && spline && processOthers ) {
+		const otherSplines = incomingSplines.filter( s => s != spline );
 
-			const otherSplines = incomingSplines.filter( s => s != spline );
+		if ( otherSplines.length >= 2 && spline && processOthers ) {
 
 			const intersections = this.intersectionService.findIntersections( otherSplines[ 0 ], otherSplines );
 
@@ -222,7 +220,7 @@ export class JunctionManager {
 
 			if ( this.mapService.hasRoad( connection.connectingRoad ) ) {
 
-				this.roadService.remove( connection.connectingRoad );
+				this.roadManager.removeRoad( connection.connectingRoad );
 
 			} else {
 

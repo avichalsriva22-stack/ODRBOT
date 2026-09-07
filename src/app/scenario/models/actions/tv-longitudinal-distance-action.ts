@@ -49,15 +49,18 @@ export class LongitudinalDistanceAction extends PrivateAction {
 		if ( this.isCompleted ) return;
 
 		if ( !this.startTime ) {
-
 			this.startTime = Time.time;
+		}
 
-			this.computeLongitudinalDistance( entity );
+		const targetEntity = this.getEntity( this.targetEntity );
 
+		if ( this.valueType === 'distance' ) {
+			this.targetDistance = this.value;
+		} else if ( this.valueType === 'timeGap' ) {
+			this.targetDistance = this.value * entity.getCurrentSpeed();
 		}
 
 		// calculate current distance to the target
-		const targetEntity = this.getEntity( this.targetEntity );
 		const currentDistance = entity.getCurrentPosition().distanceTo( targetEntity.getCurrentPosition() );
 		const targetEntitySpeed = targetEntity.getCurrentSpeed();
 
@@ -76,28 +79,10 @@ export class LongitudinalDistanceAction extends PrivateAction {
 
 			this.actionCompleted();
 
-		} else if ( this.valueType == 'timeGap' ) {
-
-			throw new Error( 'Not implemented' );
-
+		} else if ( this.valueType == 'timeGap' && distanceReached && !this.continous ) {
+			this.actionCompleted();
 		}
 
 		// Debug.log( 'LongitudinalDistanceAction', entity.name, currentDistance, this.targetDistance, entity.getCurrentSpeed() );
-	}
-
-	private computeLongitudinalDistance ( entity: ScenarioEntity ): void {
-
-		if ( this.valueType === 'distance' ) {
-
-			this.targetDistance = this.value;
-
-		} else if ( this.valueType === 'timeGap' ) {
-
-			throw new Error( 'Not implemented' );
-
-			// this.targetDistance = this.value * entity.getCurrentSpeed();
-
-		}
-
 	}
 }

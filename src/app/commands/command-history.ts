@@ -44,6 +44,23 @@ export class CommandHistory {
 
 	}
 
+	static pushToHistory ( command: ICommand ): void {
+
+		console.info( 'push to history only (already executed)', command );
+
+		this.undos.push( command );
+
+		// clear all redos on a new action
+		this.redos.splice( 0, this.redos.length );
+
+	}
+
+	static pushManyToHistory ( ...cmds: ICommand[] ): void {
+
+		this.pushToHistory( new MultiCmdsCommand( cmds ) );
+
+	}
+
 	static undo (): void {
 
 		if ( this.undos.length > 0 ) {

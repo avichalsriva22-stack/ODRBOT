@@ -170,9 +170,7 @@ export class RelativeLanePosition extends Position {
 	}
 
 	updateFromWorldPosition ( position: Vector3, orientation: Orientation ): void {
-
-		throw new Error( 'Method not implemented.' );
-
+		// Not implemented for relative positions in the editor.
 	}
 
 

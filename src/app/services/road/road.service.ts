@@ -21,6 +21,7 @@ import { TvPosTheta } from "../../map/models/tv-pos-theta";
 import { Maths } from "../../utils/maths";
 import { TvLaneCoord } from 'app/map/models/tv-lane-coord';
 import { RoadUtils } from 'app/utils/road.utils';
+import { TvUtils } from 'app/map/models/tv-utils';
 import { Log } from 'app/core/utils/log';
 import { ModelNotFoundException } from 'app/exceptions/exceptions';
 import { RoadWidthService } from './road-width.service';
@@ -311,50 +312,46 @@ export class RoadService extends BaseDataService<TvRoad> {
 		const s = posTheta.s;
 		const t = posTheta.t;
 
-		for ( const laneSection of nearestRoad.laneSections ) {
+		const laneSection = TvUtils.checkIntervalArray( nearestRoad.laneSections, s );
 
-			// TODO: Fix this, checkInteral does not check properly
-			if ( laneSection.checkInterval( s ) ) {
+		if ( laneSection ) {
 
-				// t is positive of left
-				// left lanes are positive int
-				// right lanes are negative int
+			// t is positive of left
+			// left lanes are positive int
+			// right lanes are negative int
 
-				let lanes: TvLane[] = [];
+			let lanes: TvLane[] = [];
 
-				// positive t means left side
-				if ( t > 0 ) {
+			// positive t means left side
+			if ( t > 0 ) {
 
-					lanes = laneSection.getLeftLanes().reverse();
+				lanes = laneSection.getLeftLanes().reverse();
 
-				} else if ( t < 0 ) {
+			} else if ( t < 0 ) {
 
-					lanes = laneSection.getRightLanes();
+				lanes = laneSection.getRightLanes();
 
-				} else if ( Maths.approxEquals( t, 0 ) ) {
+			} else if ( Maths.approxEquals( t, 0 ) ) {
 
-					lanes = laneSection.getCenterLanes();
+				lanes = laneSection.getCenterLanes();
 
-				}
+			}
 
-				let cumulativeWidth = 0;
+			let cumulativeWidth = 0;
 
-				for ( const lane of lanes ) {
+			for ( const lane of lanes ) {
 
-					const width = lane.getWidthValue( s );
+				const width = lane.getWidthValue( s );
 
-					cumulativeWidth += width;
+				cumulativeWidth += width;
 
-					if ( cumulativeWidth >= Math.abs( t ) ) {
+				if ( cumulativeWidth >= Math.abs( t ) ) {
 
-						nearestLane = lane;
-						break;
-
-					}
+					nearestLane = lane;
+					break;
 
 				}
 
-				break;
 			}
 
 		}

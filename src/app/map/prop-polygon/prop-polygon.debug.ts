@@ -4,7 +4,7 @@
 
 import { Injectable } from '@angular/core';
 import { PropPolygon } from "./prop-polygon.model";
-import { AbstractSplineDebugService } from "../../services/debug/abstract-spline-debug.service";
+import { SplineDebugService } from "../../services/debug/spline-debug.service";
 import { HasSplineDebugService } from '../../services/debug/has-spline-debug.service';
 
 @Injectable( {
@@ -12,10 +12,8 @@ import { HasSplineDebugService } from '../../services/debug/has-spline-debug.ser
 } )
 export class PropPolygonDebugService extends HasSplineDebugService<PropPolygon> {
 
-	constructor ( debug: AbstractSplineDebugService ) {
+	constructor ( debug: SplineDebugService ) {
 		super( debug );
 	}
 
 }
-
-

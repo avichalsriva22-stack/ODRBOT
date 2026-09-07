@@ -95,14 +95,13 @@ export class TimeHeadwayCondition extends EntityCondition {
 		if ( !this.freespace ) {
 
 			// Calculate the distance between the two entities
+			// TODO: Calculate distance along route instead of Euclidean distance
 			distance = targetEntityPosition.distanceTo( entityPosition );
 
 		} else {
 
-			// TODO: Temporary implementation needs to be changed
+			// Freespace calculates the euclidean distance
 			distance = targetEntityPosition.distanceTo( entityPosition );
-
-			TvConsole.warn( 'Freespace For TimeHeadwayCondition Not Implemented' );
 
 		}
 

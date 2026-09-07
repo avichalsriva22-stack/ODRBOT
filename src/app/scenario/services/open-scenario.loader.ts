@@ -28,6 +28,8 @@ import {
 import { LaneChangeAction } from '../models/actions/tv-lane-change-action';
 import { RelativeTarget } from '../models/actions/tv-relative-target';
 import { AbstractRoutingAction, FollowRouteAction, TimeReference, Timing } from '../models/actions/tv-routing-action';
+import { LongitudinalDistanceAction } from '../models/actions/tv-longitudinal-distance-action';
+import { DynamicConstraints } from '../models/dynamic-constraints';
 import { SpeedAction } from '../models/actions/tv-speed-action';
 import { TeleportAction } from '../models/actions/tv-teleport-action';
 import { EntityCondition } from '../models/conditions/entity-condition';
@@ -1834,13 +1836,40 @@ export class OpenScenarioLoader extends AbstractReader {
 
 			return new SpeedAction( dynamics, target );
 
-		} else if ( xml.Distance != null ) {
+		} else if ( xml.Distance != null || xml.LongitudinalDistanceAction != null || xml.DistanceAction != null ) {
 
-			TvConsole.error( 'not implemented' );
+			const distanceNode = xml.Distance || xml.LongitudinalDistanceAction || xml.DistanceAction;
+			
+			const entityRef = distanceNode.attr_entityRef;
+			const freespace = distanceNode.attr_freespace === 'true';
+			const continuous = distanceNode.attr_continuous === 'true';
+			
+			let valueType: 'distance' | 'timeGap' = 'distance';
+			let value = 0;
+			
+			if (distanceNode.Distance) {
+				value = parseFloat(distanceNode.Distance?.attr_value || 0);
+				valueType = 'distance';
+			} else if (distanceNode.TimeGap) {
+				value = parseFloat(distanceNode.TimeGap?.attr_value || 0);
+				valueType = 'timeGap';
+			}
+			
+			const dynamicConstraints = this.parseDynamicConstraints(distanceNode.DynamicConstraints);
+			
+			return new LongitudinalDistanceAction(entityRef, value, valueType, freespace, continuous, dynamicConstraints);
 
 		}
 
 		return action;
+	}
+
+	parseDynamicConstraints ( xml: XmlElement ): DynamicConstraints {
+		if ( !xml ) return new DynamicConstraints();
+		const maxAcceleration = parseFloat( xml.attr_maxAcceleration || 10.0 );
+		const maxDeceleration = parseFloat( xml.attr_maxDeceleration || 10.0 );
+		const maxSpeed = parseFloat( xml.attr_maxSpeed || 40.0 );
+		return new DynamicConstraints( maxAcceleration, maxDeceleration, maxSpeed );
 	}
 
 	parseTarget ( xml: XmlElement ): Target {

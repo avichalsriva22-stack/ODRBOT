@@ -1,0 +1,121 @@
+:host {
+	display: block;
+}
+
+.card-container {
+	background: #3a3a3a;
+	border: 1px solid #4a4a4a;
+	border-radius: 8px;
+	overflow: hidden;
+	margin-top: 4px;
+	
+	&.succeeded { border-color: #4CAF5044; }
+	&.failed { border-color: #F4433644; }
+	&.rejected { opacity: 0.8; }
+}
+
+.card-header {
+	display: flex;
+	align-items: center;
+	padding: 8px 12px;
+	background: #333;
+	border-bottom: 1px solid #444;
+	
+	.category-icon {
+		font-size: 16px;
+		width: 16px;
+		height: 16px;
+		color: #aaa;
+		margin-right: 8px;
+	}
+	
+	.tool-name {
+		font-weight: 500;
+		font-size: 12px;
+		color: #ddd;
+		flex: 1;
+	}
+	
+	.status-indicator {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		
+		mat-icon {
+			font-size: 16px;
+			width: 16px;
+			height: 16px;
+		}
+		
+		.success-icon { color: #4CAF50; }
+		.error-icon { color: #F44336; }
+		.rejected-icon { color: #9E9E9E; }
+	}
+}
+
+.card-body {
+	padding: 10px 12px;
+	font-size: 12px;
+	color: #ccc;
+}
+
+.status-text {
+	color: #999;
+	font-style: italic;
+}
+
+.error-text {
+	color: #ffb4ab;
+}
+
+.success-area {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	
+	.summary {
+		line-height: 1.4;
+	}
+	
+	.undo-btn {
+		align-self: flex-start;
+		font-size: 11px;
+		padding: 0 8px;
+		height: 24px;
+		line-height: 24px;
+		min-width: 0;
+		color: #64b5f6;
+	}
+}
+
+.confirmation-area {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	
+	.actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+		
+		button {
+			font-size: 12px;
+			padding: 0 12px;
+			height: 28px;
+			line-height: 28px;
+		}
+	}
+}
+
+.spinner-small {
+	width: 14px;
+	height: 14px;
+	border: 2px solid #555;
+	border-top-color: #2196F3;
+	border-radius: 50%;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	to { transform: rotate(360deg); }
+}

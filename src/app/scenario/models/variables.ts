@@ -24,7 +24,7 @@ class VariableValue<T> implements Value<T> {
 	}
 
 	get value (): T {
-		return window.get( this._var ) || null;
+		return (window as any)[ this._var ] || null;
 	}
 }
 

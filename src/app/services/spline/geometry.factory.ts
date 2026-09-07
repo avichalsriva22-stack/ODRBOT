@@ -151,8 +151,6 @@ abstract class GeometryFactory {
 
 		const hdg = start.hdg;
 
-		length = p1.distanceTo( p2 ); // TODO fix this
-
 		const tangent1Length = 7; // hdgs[ i ][ 1 ]
 		const tangent2Length = 7; // hdgs[ i + 1 ][ 2 ]
 
@@ -161,7 +159,7 @@ abstract class GeometryFactory {
 
 		const hs = HermiteSpline( new Vector2( 0, 0 ), p2proj, t1, t2 );
 
-		length = Length( hs, 0.001 );
+		const length = Length( hs, 0.001 );
 
 		const f3 = new Vector2( -2 * p2proj.x + 1 * t1.x + 1 * t2.x, -2 * p2proj.y + 1 * t1.y + 1 * t2.y );
 		const f2 = new Vector2( 3 * p2proj.x - 2 * t1.x - 1 * t2.x, 3 * p2proj.y - 2 * t1.y - 1 * t2.y );

@@ -63,28 +63,20 @@ export abstract class EntityCondition extends Condition {
 
 	protected getTravelledDistance ( entityName: string ): number {
 
-		throw new Error( 'Not implemented' );
+		return this.getEntity( entityName ).getDistanceTraveled();
 
 	}
 
 	protected calculateDistance ( entityName: string, position: Position, freespace: boolean ): number {
 
+		const entityPosition = this.getEntityPosition( entityName );
+		const euclideanDistance = entityPosition.distanceTo( position.getVectorPosition() );
+
 		if ( !freespace ) {
-
-			// This function should return the current position of the entity with the given name
-			const entityPosition = this.getEntityPosition( entityName );
-
-			// For free space distance, calculate the Euclidean distance from the entity to the position
-			return entityPosition.distanceTo( position.getVectorPosition() );
-
+			// TODO: Calculate distance along route instead of Euclidean distance
+			return euclideanDistance;
 		} else {
-
-			throw new Error( 'Not implemented' );
-
-			// For alongRoute, calculate the distance traveled along the route
-			// This can be complex and would require information about the route,
-			// which is not provided in this example. As a placeholder, we use a fixed value.
-			// return this.getTravelledDistance( entityName );  // This function should return the total distance traveled by the entity along the route
+			return euclideanDistance;
 		}
 
 	}

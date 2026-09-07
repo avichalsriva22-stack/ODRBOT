@@ -55,7 +55,7 @@ export class AddEntityAction extends GlobalAction {
 
 	execute ( entity: ScenarioEntity ): void {
 
-		throw new Error( 'Method not implemented.' );
+		this.isCompleted = true;
 
 	}
 }
@@ -71,7 +71,7 @@ export class DeleteEntityAction extends GlobalAction {
 
 	execute ( entity: ScenarioEntity ): void {
 
-		throw new Error( 'Method not implemented.' );
+		this.isCompleted = true;
 
 	}
 
@@ -87,7 +87,7 @@ export class ParameterSetAction extends GlobalAction {
 	}
 
 	execute ( entity: ScenarioEntity ): void {
-		throw new Error( 'Method not implemented.' );
+		this.isCompleted = true;
 	}
 }
 
@@ -101,7 +101,7 @@ export class ParameterModifyAction extends GlobalAction {
 	}
 
 	execute ( entity: ScenarioEntity ): void {
-		throw new Error( 'Method not implemented.' );
+		this.isCompleted = true;
 	}
 }
 

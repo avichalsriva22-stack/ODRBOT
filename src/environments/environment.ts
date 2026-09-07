@@ -11,4 +11,5 @@ export const environment = {
 	experimtental_tools: false,
 	logging: true,
 	log_level: LogLevel.DEBUG,
+	aiChatPanelEnabled: true,
 }

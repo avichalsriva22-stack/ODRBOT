@@ -1,0 +1,98 @@
+<div class="ai-panel-container">
+	<div class="header">
+		<button mat-icon-button (click)="collapsedChange.emit(true)"><mat-icon>chevron_right</mat-icon></button>
+		<span class="title">AI Assistant</span>
+		
+		<div class="mode-toggle">
+			<mat-button-toggle-group [(ngModel)]="currentMode" aria-label="Mode">
+				<mat-button-toggle value="auto">Auto</mat-button-toggle>
+				<mat-button-toggle value="chat">Chat</mat-button-toggle>
+				<mat-button-toggle value="goal">Build</mat-button-toggle>
+			</mat-button-toggle-group>
+		</div>
+
+		<button mat-icon-button (click)="openSettings()"><mat-icon>settings</mat-icon></button>
+	</div>
+	
+	<div class="body" #scrollBody (scroll)="onScroll()" aria-live="polite" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+		<ng-container *ngIf="(messages$ | async) as messages">
+			<ng-container *ngIf="messages.length > 0; else emptyState">
+				<div class="message-feed">
+					<app-ai-message-bubble *ngFor="let message of messages" [message]="message"></app-ai-message-bubble>
+				</div>
+			</ng-container>
+
+			<ng-template #emptyState>
+				<div class="empty-state">
+					<h3>Ask me to edit your map</h3>
+					<ng-container *ngIf="(settings$ | async)?.apiKeyConfigured; else noKey">
+						<button mat-stroked-button (click)="exampleClick('Widen the selected lane to 4m')">Widen the selected lane to 4m</button>
+						<button mat-stroked-button (click)="exampleClick('Add a crosswalk here')">Add a crosswalk here</button>
+						<button mat-stroked-button (click)="exampleClick('Create a 4-way roundabout')">Create a 4-way roundabout</button>
+						<button mat-stroked-button (click)="exampleClick('Set this road\'s speed to 60')">Set this road's speed to 60</button>
+					</ng-container>
+					<ng-template #noKey>
+						<button mat-flat-button color="primary" (click)="openSettings()">Add your Anthropic API key to get started</button>
+					</ng-template>
+				</div>
+			</ng-template>
+			
+			<div class="error-banner" *ngIf="messages.length > 0 && messages[messages.length - 1].error as err">
+				<ng-container [ngSwitch]="err.kind">
+					<div *ngSwitchCase="'network'">
+						Can't reach the AI service. Check your connection.
+						<button mat-button (click)="send()">Retry</button>
+					</div>
+					<div *ngSwitchCase="'auth'">
+						Your API key was rejected. Please check it in settings.
+						<button mat-button (click)="openSettings()">Open settings</button>
+					</div>
+					<div *ngSwitchCase="'rate_limit'">
+						Rate limit reached — please wait a moment and try again.
+					</div>
+					<div *ngSwitchDefault>
+						{{ err.message }}
+					</div>
+				</ng-container>
+			</div>
+			<div class="error-banner" *ngIf="!(settings$ | async)?.apiKeyConfigured && messages.length > 0">
+				No API key configured.
+				<button mat-button (click)="openSettings()">Add key</button>
+			</div>
+		</ng-container>
+	</div>
+	
+	<div class="footer">
+		<div class="attachments" *ngIf="attachedImages.length > 0">
+			<div class="attachment-chip" *ngFor="let img of attachedImages; let i = index">
+				<img [src]="'data:' + img.mediaType + ';base64,' + img.base64" alt="thumbnail">
+				<span class="file-name" [title]="img.fileName">{{ img.fileName }}</span>
+				<button mat-icon-button class="remove-btn" (click)="removeAttachment(i)"><mat-icon>close</mat-icon></button>
+			</div>
+		</div>
+		<div class="input-row" [class.attaching]="isAttaching">
+			<button mat-icon-button (click)="attachImage()" [disabled]="isAttaching || attachedImages.length >= 4" class="attach-btn" title="Attach Image (Max 4)">
+				<mat-icon>attach_file</mat-icon>
+			</button>
+			<mat-form-field class="chat-input-field" appearance="outline">
+				<textarea matInput 
+					[(ngModel)]="inputText" 
+					(keydown.enter)="!$any($event).shiftKey && send(); $any($event).shiftKey ? null : $event.preventDefault()" 
+					aria-label="Message the AI assistant" 
+					placeholder="Message the AI assistant..."
+					cdkTextareaAutosize
+					#autosize="cdkTextareaAutosize"
+					cdkAutosizeMinRows="1"
+					cdkAutosizeMaxRows="5">
+				</textarea>
+			</mat-form-field>
+			<ng-container *ngIf="(isStreaming$ | async); else notStreaming">
+				<button mat-icon-button (click)="stop()" color="warn"><mat-icon>stop</mat-icon></button>
+			</ng-container>
+			<ng-template #notStreaming>
+				<button mat-icon-button (click)="send()" [disabled]="(!inputText.trim() && attachedImages.length === 0) || isAttaching" color="primary"><mat-icon>send</mat-icon></button>
+			</ng-template>
+		</div>
+		<div class="hint-text">AI can make mistakes — review actions before confirming.</div>
+	</div>
+</div>

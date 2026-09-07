@@ -348,6 +348,22 @@ export class TvRoad {
 		return this.relations.getPredecessorSpline();
 	}
 
+	getPredecessorRoadId (): number | undefined {
+		const pred = this.predecessor;
+		if ( pred && pred.isRoad ) {
+			return pred.element.id;
+		}
+		return undefined;
+	}
+
+	getSuccessorRoadId (): number | undefined {
+		const succ = this.successor;
+		if ( succ && succ.isRoad ) {
+			return succ.element.id;
+		}
+		return undefined;
+	}
+
 	getPlanView (): TvPlaneView {
 		return this.planView;
 	}

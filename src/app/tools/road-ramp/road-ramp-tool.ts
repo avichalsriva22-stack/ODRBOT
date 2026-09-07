@@ -167,15 +167,13 @@ export class RoadRampTool extends BaseTool<any> {
 
 	private initCreation ( position: TvLaneCoord | Vector3 ): void {
 
-		// TODO: add support for vector3 for starting point
-		if ( position instanceof Vector3 ) {
-			this.setHint( 'Select a lane to start ramp' );
-			return;
-		}
+		if ( position instanceof TvLaneCoord ) {
 
-		if ( position.lane?.type !== TvLaneType.driving ) {
-			this.setHint( 'Select a driving lane to start ramp. Non driving lanes are not supported' );
-			return;
+			if ( position.lane?.type !== TvLaneType.driving ) {
+				this.setHint( 'Select a driving lane to start ramp. Non driving lanes are not supported' );
+				return;
+			}
+
 		}
 
 		this.startCoord = position;
@@ -207,13 +205,9 @@ export class RoadRampTool extends BaseTool<any> {
 
 	private createRampRoad ( startCoord: TvLaneCoord | Vector3, endCoord: TvLaneCoord | Vector3 ): void {
 
-		if ( startCoord instanceof TvLaneCoord ) {
+		const road = this.helper.createRampRoad( startCoord, endCoord );
 
-			const road = this.helper.createRampRoad( startCoord, endCoord );
-
-			Commands.AddObject( road.spline );
-
-		}
+		Commands.AddObject( road.spline );
 
 		if ( this.referenceLine ) this.referenceLine.visible = false;
 

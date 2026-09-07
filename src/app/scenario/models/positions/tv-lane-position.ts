@@ -5,6 +5,7 @@
 import { Vector3 } from 'app/core/maths';
 import { TvMapQueries } from '../../../map/queries/tv-map-queries';
 import { Position } from '../position';
+import { TvPosTheta } from 'app/map/models/tv-pos-theta';
 import { OpenScenarioVersion, PositionType } from '../tv-enums';
 import { Orientation } from '../tv-orientation';
 import { TvRoad } from 'app/map/models/tv-road.model';
@@ -70,7 +71,17 @@ export class LanePosition extends Position {
 
 	updateFromWorldPosition ( position: Vector3, orientation: Orientation ): void {
 
-		throw new Error( 'Method not implemented.' );
+		const posTheta = new TvPosTheta();
+		const res = TvMapQueries.getLaneByCoords( position.x, position.y, posTheta );
+
+		if ( res.road && res.lane ) {
+			this.roadId = res.road.id;
+			this.laneId = res.lane.id;
+			this.sCoordinate = posTheta.s;
+			
+			this.setPosition( position );
+			this.updated.emit();
+		}
 
 	}
 
@@ -105,7 +116,17 @@ export class NewLanePosition extends Position {
 
 	updateFromWorldPosition ( position: Vector3, orientation: Orientation ): void {
 
-		throw new Error( 'Method not implemented.' );
+		const posTheta = new TvPosTheta();
+		const res = TvMapQueries.getLaneByCoords( position.x, position.y, posTheta );
+
+		if ( res.road && res.lane ) {
+			this.road = res.road;
+			this.lane = res.lane;
+			this.laneSection = res.road.getLaneProfile().getLaneSectionAt( posTheta.s );
+			
+			this.setPosition( position );
+			this.updated.emit();
+		}
 
 	}
 

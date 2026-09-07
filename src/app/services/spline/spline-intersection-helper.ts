@@ -137,24 +137,6 @@ function computeOffsets ( intersection: SplineIntersection ): void {
 	const otherStart = Math.max( bMin.s - BUFFER, 0 );
 	const otherEnd = Math.min( bMax.s + BUFFER, intersection.otherSpline.getLength() );
 
-	// TEMP: hack to fix the offset issue at ends
-
-	// if ( otherStart == 0 ) {
-	// 	otherEnd += 5;
-	// }
-
-	// if ( splineStart == 0 ) {
-	// 	splineEnd += 5;
-	// }
-
-	// if ( otherEnd == intersection.otherSpline.getLength() ) {
-	// 	otherStart -= 5;
-	// }
-
-	// if ( splineEnd == intersection.spline.getLength() ) {
-	// 	splineStart -= 5;
-	// }
-
 	intersection.addSection( intersection.spline, splineStart, splineEnd );
 	intersection.addSection( intersection.otherSpline, otherStart, otherEnd );
 

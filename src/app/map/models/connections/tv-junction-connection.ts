@@ -470,11 +470,11 @@ export class TvJunctionConnection {
 	}
 
 	getEntryCoords (): TvLaneCoord[] {
-		throw new Error( 'Method not implemented.' );
+		return this.getIncomingCoords();
 	}
 
 	getExitCoords (): TvLaneCoord[] {
-		throw new Error( 'Method not implemented.' );
+		return this.getOutgoingCoords();
 	}
 
 	protected getInnerMostDrivingLane (): TvLane {

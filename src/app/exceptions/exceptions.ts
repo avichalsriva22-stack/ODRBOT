@@ -19,10 +19,11 @@ export class LaneSectionNotFound extends ModelNotFoundException {
 }
 
 export class LaneNotFound extends ModelNotFoundException {
-	constructor ( laneId?: number ) {
-		super( `Lane with id ${ laneId } not found` );
+	constructor ( id: number ) {
+		super( `Lane with id ${ id } not found` );
 		this.name = 'LaneNotFound';
 		Error.captureStackTrace( this, LaneNotFound );
+		console.trace('LaneNotFound thrown for id', id);
 	}
 }
 

@@ -3,7 +3,7 @@
  */
 
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { Router } from '@angular/router';
@@ -26,6 +26,7 @@ import { AppInspector } from 'app/core/inspector';
 import { SerializedField } from 'app/core/components/serialization';
 import { LocalStorage } from 'app/services/local-storage';
 import { MapValidatorService } from 'app/services/map/map-validator.service';
+import { AiFeatureFlag } from '../../../ai/models/ai-feature-flag';
 
 
 @Component( {
@@ -34,6 +35,8 @@ import { MapValidatorService } from 'app/services/map/map-validator.service';
 	styleUrls: [ './menu-bar.component.css' ]
 } )
 export class MenuBarComponent implements OnInit {
+
+	@Output() toggleAiPanel = new EventEmitter<void>();
 
 	get oscEnabled (): boolean {
 		return Environment.oscEnabled;
@@ -45,6 +48,10 @@ export class MenuBarComponent implements OnInit {
 
 	get production () {
 		return Environment.production;
+	}
+
+	get aiFeatureEnabled() {
+		return AiFeatureFlag.enabled;
 	}
 
 	constructor (

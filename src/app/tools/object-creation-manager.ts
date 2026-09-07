@@ -6,6 +6,7 @@ import { PointerEventData } from "app/events/pointer-event-data";
 import { StatusBarService } from "app/services/status-bar.service";
 import { CreationStrategy } from "../core/interfaces/creation-strategy";
 import { SnackBar } from "app/services/snack-bar.service";
+import { AppInjector } from "app/app.module";
 
 export class ObjectCreationManager {
 
@@ -89,7 +90,7 @@ export class ObjectCreationManager {
 
 		StatusBarService.setHint( messages[ 0 ] );
 
-		SnackBar.instance?.warn( messages[ 0 ] );
+		AppInjector?.get( SnackBar )?.warn( messages[ 0 ] );
 
 	}
 

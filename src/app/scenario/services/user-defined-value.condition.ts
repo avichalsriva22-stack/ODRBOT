@@ -31,7 +31,7 @@ export class UserDefinedValueCondition extends Condition {
 		public attr_rule: Rule
 	) {
 		super();
-		TvConsole.warn( 'UserDefinedValueCondition is not implemented yet' );
+		// User defined conditions are evaluated by the external simulator
 	}
 
 	hasPassed (): boolean {

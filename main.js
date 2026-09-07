@@ -3,9 +3,167 @@
  */
 
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, Menu, screen } = require( 'electron' );
+const { app, BrowserWindow, Menu, screen, ipcMain, safeStorage, net } = require( 'electron' );
 const path = require( 'path' );
+const fs = require( 'fs' );
 const log = require( 'electron-log' );
+
+
+// ─── AI API Key Storage (doc 07 §2) ─────────────────────────────────
+// API key is encrypted at rest via Electron safeStorage (OS keychain /
+// DPAPI / libsecret). Never readable from the renderer process.
+
+const getAiKeyFile = (provider) => provider === 'anthropic'
+	? path.join( app.getPath( 'userData' ), 'ai_key.bin' )
+	: path.join( app.getPath( 'userData' ), `ai_key_${provider}.bin` );
+
+function saveApiKey ( provider, plainTextKey ) {
+	if ( !safeStorage.isEncryptionAvailable() ) return;
+	const encrypted = safeStorage.encryptString( plainTextKey );
+	fs.writeFileSync( getAiKeyFile(provider), encrypted );
+}
+
+function loadApiKey ( provider ) {
+	const file = getAiKeyFile(provider);
+	if ( !fs.existsSync( file ) ) return null;
+	if ( !safeStorage.isEncryptionAvailable() ) return null;
+	const encrypted = fs.readFileSync( file );
+	return safeStorage.decryptString( encrypted );
+}
+
+function clearApiKey ( provider ) {
+	const file = getAiKeyFile(provider);
+	if ( fs.existsSync( file ) ) fs.unlinkSync( file );
+}
+
+function hasApiKey ( provider ) {
+	return fs.existsSync( getAiKeyFile(provider) );
+}
+
+// ─── AI IPC Handlers (doc 07 §3) ────────────────────────────────────
+
+ipcMain.handle( 'ai:set-api-key', ( event, provider, plainTextKey ) => {
+	saveApiKey( provider, plainTextKey );
+	return { ok: true };
+} );
+
+ipcMain.handle( 'ai:has-api-key', ( event, provider ) => hasApiKey( provider ) );
+
+ipcMain.handle( 'ai:clear-api-key', ( event, provider ) => {
+	clearApiKey( provider );
+	return { ok: true };
+} );
+
+// Streaming completion: renderer sends a request id, main process streams
+// chunks back via webContents.send on a per-request channel, and resolves
+// the handle() call when the stream is done or errors.
+const activeStreams = new Map(); // requestId -> AbortController
+
+ipcMain.handle( 'ai:chat-completion-stream', async ( event, { requestId, provider, payload } ) => {
+
+	const apiKey = loadApiKey( provider );
+
+	if ( !apiKey ) {
+		event.sender.send( `ai:stream-error:${ requestId }`, { kind: 'auth', message: 'No API key configured.' } );
+		return;
+	}
+
+	const controller = new AbortController();
+	activeStreams.set( requestId, controller );
+
+	try {
+		let endpoint, headers, body;
+		if (provider === 'openrouter') {
+			endpoint = 'https://openrouter.ai/api/v1/chat/completions';
+			headers = {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${apiKey}`,
+				'HTTP-Referer': 'http://localhost:4200',
+				'X-Title': 'TrueVision AI Designer',
+			};
+			body = JSON.stringify( { ...payload, stream: true } );
+		} else {
+			endpoint = 'https://api.anthropic.com/v1/messages';
+			headers = {
+				'Content-Type': 'application/json',
+				'x-api-key': apiKey,
+				'anthropic-version': '2023-06-01',
+			};
+			body = JSON.stringify( { ...payload, stream: true } );
+		}
+
+		const request = net.request({
+			method: 'POST',
+			url: endpoint
+		});
+
+		for (const [key, value] of Object.entries(headers)) {
+			request.setHeader(key, value);
+		}
+
+		request.write(body);
+
+		request.on('response', (response) => {
+			if (response.statusCode >= 400) {
+				let errorText = '';
+				response.on('data', (chunk) => { errorText += chunk.toString(); });
+				response.on('end', () => {
+					console.error(`AI API Error [${response.statusCode}]:`, errorText);
+					const kind = response.statusCode === 401 ? 'auth' : response.statusCode === 429 ? 'rate_limit' : 'unknown';
+					event.sender.send(`ai:stream-error:${requestId}`, { kind, message: `${provider} API error ${response.statusCode}`, status: response.statusCode });
+				});
+				return;
+			}
+
+			const createParser = provider === 'openrouter' ? require('./src/electron/openai-sse-parser').createOpenAiSseParser : require('./src/electron/anthropic-sse-parser').createAnthropicSseParser;
+
+			try {
+				const parseChunk = createParser((sseEvent) => {
+					event.sender.send(`ai:stream-event:${requestId}`, sseEvent);
+				});
+
+				response.on('data', (chunk) => {
+					try {
+						parseChunk(chunk);
+					} catch (err) {
+						console.error('AI STREAM PARSE CHUNK ERROR:', err);
+						event.sender.send(`ai:stream-error:${requestId}`, { kind: 'network', message: err.message });
+					}
+				});
+
+				response.on('end', () => {
+					event.sender.send(`ai:stream-done:${requestId}`);
+				});
+			} catch (err) {
+				console.error('AI STREAM INIT PARSER ERROR:', err);
+				event.sender.send(`ai:stream-error:${requestId}`, { kind: 'network', message: err.message });
+			}
+		});
+
+		request.on('error', (err) => {
+			console.error('AI REQUEST ERROR:', err);
+			event.sender.send(`ai:stream-error:${requestId}`, { kind: 'network', message: err.message });
+		});
+
+		request.end();
+
+	} catch ( err ) {
+		console.error( 'AI STREAM CATCH ERROR:', err );
+		if ( err.name === 'AbortError' ) {
+			event.sender.send( `ai:stream-done:${ requestId }` );
+		} else {
+			event.sender.send( `ai:stream-error:${ requestId }`, { kind: 'network', message: err.message } );
+		}
+	} finally {
+		activeStreams.delete( requestId );
+	}
+} );
+
+ipcMain.handle( 'ai:cancel-stream', ( event, requestId ) => {
+	const controller = activeStreams.get( requestId );
+	if ( controller ) controller.abort();
+	return { ok: true };
+} );
 
 log.initialize();
 log.info( 'App Launched' );
@@ -58,6 +216,12 @@ function openEditorWindow () {
 	const remoteMain = require( "@electron/remote/main" )
 	remoteMain.initialize()
 	remoteMain.enable( editorWindow.webContents )
+
+	editorWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
+		if (level >= 2) {
+			console.log(`RENDERER ERROR [${sourceId}:${line}]: ${message}`);
+		}
+	});
 
 	editorWindow.loadFile( 'dist/index.html' )
 

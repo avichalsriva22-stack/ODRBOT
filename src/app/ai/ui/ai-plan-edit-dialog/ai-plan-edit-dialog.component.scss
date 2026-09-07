@@ -1,0 +1,87 @@
+.edit-hint {
+	font-size: 12.5px;
+	color: rgba(255, 255, 255, 0.6);
+	margin-bottom: 16px;
+}
+
+.step-edit-list {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	max-height: 420px;
+	overflow-y: auto;
+	padding-right: 4px;
+}
+
+.step-edit-row {
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 8px;
+	padding: 10px;
+
+	.step-edit-header {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-bottom: 8px;
+
+		.step-num {
+			font-size: 11px;
+			color: rgba(255, 255, 255, 0.35);
+			min-width: 16px;
+		}
+		.step-tool-name {
+			font-size: 12px;
+			color: var(--ai-accent, #9370db);
+			font-weight: 600;
+		}
+		.step-desc {
+			flex: 1;
+			font-size: 11.5px;
+			color: rgba(255, 255, 255, 0.7);
+		}
+	}
+
+	.args-textarea {
+		width: 100%;
+		font-family: 'Fira Code', monospace;
+		font-size: 11px;
+		background: rgba(0, 0, 0, 0.3);
+		color: #b2dfdb;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 4px;
+		padding: 6px;
+		resize: vertical;
+		box-sizing: border-box;
+		user-select: text;
+		-webkit-user-select: text;
+	}
+}
+
+.revise-section {
+	margin-top: 16px;
+
+	.revise-label {
+		font-size: 12.5px;
+		color: rgba(255, 255, 255, 0.7);
+		margin-bottom: 6px;
+	}
+	.revise-textarea {
+		width: 100%;
+		font-family: inherit;
+		font-size: 12px;
+		background: rgba(0, 0, 0, 0.2);
+		color: #fff;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 4px;
+		padding: 8px;
+		resize: vertical;
+		box-sizing: border-box;
+		user-select: text;
+		-webkit-user-select: text;
+	}
+	.revise-hint {
+		font-size: 11px;
+		color: rgba(255, 255, 255, 0.35);
+		margin-top: 4px;
+	}
+}

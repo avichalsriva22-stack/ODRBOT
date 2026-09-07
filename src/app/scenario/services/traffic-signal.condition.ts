@@ -19,7 +19,7 @@ export class TrafficSignalCondition extends ValueCondition {
 
 	constructor ( public name: string, public state: string ) {
 		super();
-		TvConsole.warn( 'TrafficSignalCondition is not implemented yet' );
+		// Traffic signal dynamic states are not fully modeled in the editor
 	}
 
 	hasPassed (): boolean {

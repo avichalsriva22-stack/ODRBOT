@@ -62,9 +62,6 @@ export class SplineFixerService {
 
 			this.mapService.map.addRoad( road );
 
-			// TODO: check if need this or not
-			// this.roadManager.addRoad( road );
-
 			if ( this.debug ) Log.warn( "Fixing No segments found, adding default road", road.toString() );
 
 		}
@@ -151,10 +148,6 @@ export class SplineFixerService {
 	}
 
 	public fixInternalLinks ( spline: AbstractSpline, setNull: boolean = false ): void {
-
-		// TODO: we need to check
-		// const predecessor = SplineUtils.findPredecessor( spline );
-		// const successor = SplineUtils.findSuccessor( spline );
 
 		if ( !SplineUtils.areLinksCorrect( spline ) ) {
 			Log.warn( "Fixing incorrect links", spline?.toString() );

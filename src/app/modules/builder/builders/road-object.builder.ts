@@ -84,9 +84,9 @@ export class RoadObjectBuilder extends MeshBuilder<TvRoadObject> {
 				return this.buildRoadMarkObject( road, roadObject );
 
 			default:
-				// TODO: Implement this
-				TvConsole.error( 'Road object type not implemented yet' + type );
-				return new Object3D();
+				// Fallback generic renderer
+				TvConsole.warn( `Road object type not explicitly implemented, using fallback bounding box for: ${type}` );
+				return this.buildRoadObjectBbox( roadObject );
 		}
 
 	}
@@ -217,7 +217,7 @@ export class RoadObjectBuilder extends MeshBuilder<TvRoadObject> {
 
 		roadObject.skeleton.polylines.forEach( polyline => {
 
-			const shape = this.extrudeService.buildShape( polyline );
+			const shape = this.extrudeService.buildShape( roadObject, polyline );
 
 			const path = null; //road.spline.getPath( roadObject.t );
 
@@ -236,8 +236,16 @@ export class RoadObjectBuilder extends MeshBuilder<TvRoadObject> {
 
 	buildVegetationObject ( road: TvRoad, roadObject: TvRoadObject ): Object3D {
 
-		// TODO: Implement this
-		return new Object3D();
+		if ( roadObject.assetGuid ) {
+			return this.buildTreeObject( road, roadObject );
+		}
+		
+		// Fallback for vegetation without a specific 3D asset
+		const mesh = this.buildRoadObjectBbox( roadObject ) as Mesh;
+		if (mesh.material instanceof MeshBasicMaterial) {
+			mesh.material.color.set('#228b22'); // Forest green
+		}
+		return mesh;
 
 	}
 
@@ -245,9 +253,13 @@ export class RoadObjectBuilder extends MeshBuilder<TvRoadObject> {
 
 		if ( !roadObject.assetGuid ) {
 
-			TvConsole.error( 'Tree object with assets guid not implemented yet' );
+			TvConsole.warn( 'Tree object without asset guid, using fallback bounding box' );
 
-			return new Object3D();
+			const mesh = this.buildRoadObjectBbox( roadObject ) as Mesh;
+			if (mesh.material instanceof MeshBasicMaterial) {
+				mesh.material.color.set('#8B4513'); // Saddle brown for tree trunk/base
+			}
+			return mesh;
 		}
 
 		const roadObjectMesh = new Object3D();

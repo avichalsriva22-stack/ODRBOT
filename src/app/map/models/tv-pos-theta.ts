@@ -115,12 +115,12 @@ export class TvPosTheta {
 	clone ( x?: number, y?: number, hdg?: number, s?: number, t?: number, z?: number ): TvPosTheta {
 
 		return new TvPosTheta(
-			x || this.x,
-			y || this.y,
-			hdg || this.hdg,
-			s || this.s,
-			t || this.t,
-			z || this.z
+			x ?? this.x,
+			y ?? this.y,
+			hdg ?? this.hdg,
+			s ?? this.s,
+			t ?? this.t,
+			z ?? this.z
 		);
 
 	}

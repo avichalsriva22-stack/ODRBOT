@@ -109,13 +109,31 @@ export class JunctionDebugService extends BaseDebugger<TvJunction> {
 
 	onHighlight ( junction: TvJunction ): void {
 
-		console.warn( 'Method not implemented.' );
+		const overlays = this.meshes.getItems( junction );
+		if ( overlays ) {
+			overlays.forEach( mesh => {
+				if ( mesh instanceof JunctionOverlay ) {
+					mesh.onMouseOver();
+				}
+			} );
+		}
 
 	}
 
 	onUnhighlight ( junction: TvJunction ): void {
 
-		console.warn( 'Method not implemented.' );
+		const overlays = this.meshes.getItems( junction );
+		if ( overlays ) {
+			overlays.forEach( mesh => {
+				if ( mesh instanceof JunctionOverlay ) {
+					if ( mesh.isSelected ) {
+						mesh.select();
+					} else {
+						mesh.onMouseOut();
+					}
+				}
+			} );
+		}
 
 	}
 

@@ -1,0 +1,50 @@
+<div class="plan-progress-card" *ngIf="plan">
+
+	<div class="progress-header">
+		<mat-icon class="running-icon" [class.completed]="isCompleted">
+			{{ isCompleted ? 'done_all' : 'play_arrow' }}
+		</mat-icon>
+		<div class="progress-header-text">
+			<span class="plan-label">{{ isCompleted ? 'Completed' : (isPaused ? 'Paused' : 'Running') }}: {{ plan.goalText }}</span>
+			<span class="progress-fraction">{{ succeededCount }} / {{ totalSteps }} steps</span>
+		</div>
+	</div>
+
+	<mat-progress-bar
+		[value]="progressPercent"
+		[color]="plan.status === 'completed_with_errors' ? 'warn' : 'primary'">
+	</mat-progress-bar>
+
+	<div class="step-list" *ngIf="showDetails">
+		<div class="step-row" *ngFor="let step of plan.steps" [class]="'status-' + step.status">
+			<mat-icon class="step-status-icon" [style.color]="stepIconColor(step.status)" [class.spinning]="step.status === 'running'">
+				{{ stepIcon(step.status) }}
+			</mat-icon>
+			<span class="step-description">{{ step.description }}</span>
+			<span class="step-result" *ngIf="step.resultSummary">({{ step.resultSummary }})</span>
+			<span class="step-error" *ngIf="step.errorMessage" [title]="step.errorMessage">⚠ {{ step.errorMessage }}</span>
+		</div>
+	</div>
+
+	<div class="plan-controls">
+		<button mat-button (click)="toggleDetails()" class="details-toggle">
+			<mat-icon>{{ showDetails ? 'expand_less' : 'expand_more' }}</mat-icon>
+			{{ showDetails ? 'Collapse' : 'View details' }}
+		</button>
+		<div class="spacer"></div>
+		<ng-container *ngIf="!isCompleted">
+			<button mat-stroked-button *ngIf="!isPaused" (click)="onPause()">Pause</button>
+			<button mat-stroked-button color="primary" *ngIf="isPaused" (click)="onResume()">Resume</button>
+			<button mat-stroked-button color="warn" (click)="onAbort()">Abort</button>
+		</ng-container>
+	</div>
+
+	<div class="completion-summary" *ngIf="isCompleted">
+		<mat-icon *ngIf="plan.status === 'completed'" style="color: #66bb6a">check_circle</mat-icon>
+		<mat-icon *ngIf="plan.status === 'completed_with_errors'" style="color: #ffa726">warning</mat-icon>
+		<span *ngIf="plan.status === 'completed'">Completed: {{ totalSteps }}/{{ totalSteps }} steps</span>
+		<span *ngIf="plan.status === 'completed_with_errors'">
+			Completed with errors — {{ succeededCount }}/{{ totalSteps }} steps
+		</span>
+	</div>
+</div>

@@ -82,6 +82,8 @@ export class RoadFactory {
 
 		road.getLaneProfile().addLaneSection( laneSection );
 
+		spline.updateSegmentGeometryAndBounds();
+
 		return road;
 
 	}

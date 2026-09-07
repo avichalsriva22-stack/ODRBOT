@@ -1,0 +1,35 @@
+<div class="bubble-container" [ngClass]="message.role">
+	<div class="avatar" *ngIf="message.role === 'assistant'">
+		<mat-icon>smart_toy</mat-icon>
+	</div>
+	<div class="content-wrapper">
+		<div class="message-content" *ngIf="message.text || message.streaming">
+			<span [innerHTML]="parsedHtml"></span>
+			<span class="blinking-cursor" *ngIf="message.streaming"></span>
+		</div>
+		
+		<div class="error-content" *ngIf="message.error">
+			<mat-icon color="warn">error_outline</mat-icon>
+			<span class="error-text">Failed: {{ message.error.message || message.error.kind }}</span>
+		</div>
+		
+		<div class="tool-calls" *ngIf="message.toolCalls?.length">
+			<app-ai-tool-call-card 
+				*ngFor="let record of message.toolCalls" 
+				[record]="record">
+			</app-ai-tool-call-card>
+		</div>
+
+		<ng-container *ngIf="message.planId">
+			<app-ai-plan-review-card
+				*ngIf="getPlan(message.planId)?.status === 'awaiting_review' || getPlan(message.planId)?.status === 'aborted'"
+				[plan]="getPlan(message.planId)!">
+			</app-ai-plan-review-card>
+			<app-ai-plan-progress
+				*ngIf="getPlan(message.planId)?.status !== 'awaiting_review' && getPlan(message.planId)?.status !== 'aborted'"
+				[planId]="message.planId"
+				[initialPlan]="getPlan(message.planId)">
+			</app-ai-plan-progress>
+		</ng-container>
+	</div>
+</div>

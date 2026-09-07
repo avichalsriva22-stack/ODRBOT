@@ -2,7 +2,7 @@
  * Copyright Truesense AI Solutions Pvt Ltd, All Rights Reserved.
  */
 
-import { BoundingBox } from './tv-bounding-box';
+import { TvBoundingBox } from './tv-bounding-box';
 import { PedestrianCategory } from './tv-enums';
 import { IScenarioObject } from './tv-interfaces';
 import { ParameterDeclaration } from './tv-parameter-declaration';
@@ -15,7 +15,7 @@ export class Pedestrian extends IScenarioObject {
 	private m_Mass: string;
 	private m_Category: PedestrianCategory;
 	private m_ParameterDeclarations: ParameterDeclaration[];
-	private m_BoundingBox: BoundingBox;
+	private m_BoundingBox: TvBoundingBox;
 	private m_Properties: TvProperties;
 
 }

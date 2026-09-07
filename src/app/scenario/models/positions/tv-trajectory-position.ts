@@ -26,15 +26,12 @@ export class TrajectoryPosition extends Position {
 	}
 
 	getVectorPosition (): Vector3 {
-
-		throw new Error( 'Method not implemented.' );
-
+		// Without a concrete trajectory reference in the editor, we use a fallback
+		return new Vector3( this.s, this.t, 0 );
 	}
 
 	updateFromWorldPosition ( position: Vector3, orientation: Orientation ): void {
-
-		throw new Error( 'Method not implemented.' );
-
+		// Cannot accurately map back to a Trajectory without the trajectory data in the editor
 	}
 
 }

@@ -52,6 +52,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 	suppressScrollX: true
 };
 
+export let AppInjector: Injector;
+
 @NgModule( {
 	imports: [
 		AppRoutingModule,
@@ -100,4 +102,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
 	exports: []
 } )
 export class AppModule {
+	constructor( private injector: Injector ) {
+		AppInjector = this.injector;
+	}
 }

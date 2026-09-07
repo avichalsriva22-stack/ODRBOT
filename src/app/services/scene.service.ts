@@ -113,11 +113,6 @@ export class SceneService {
 
 	static addToolObject ( object: Object3D ): void {
 
-		// BUG FIX: this is a hack to fix the issue of removing an object from the scene
-		if ( object.parent === undefined ) {
-			object.parent = null;
-		}
-
 		this.toolLayer.add( object );
 
 		this.changed.emit();
@@ -197,8 +192,8 @@ export class SceneService {
 
 		if ( node instanceof Mesh ) {
 
-			node.parent.remove( node );
-			node.parent = undefined;
+			node.parent?.remove( node );
+			node.parent = null;
 
 			if ( node.geometry ) {
 
@@ -275,13 +270,13 @@ export class SceneService {
 
 		} else if ( node instanceof Object3D ) {
 
-			node.parent.remove( node );
-			node.parent = undefined;
+			node.parent?.remove( node );
+			node.parent = null;
 
 		} else if ( node instanceof GameObject ) {
 
-			node.parent.remove( node );
-			node.parent = undefined;
+			node.parent?.remove( node );
+			node.parent = null;
 
 		} else {
 

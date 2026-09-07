@@ -7,6 +7,7 @@ import { Log } from "app/core/utils/log";
 import { PointerEventData } from "app/events/pointer-event-data";
 import { SnackBar } from "app/services/snack-bar.service";
 import { AssetHandler } from "../core/interfaces/asset-handler";
+import { AppInjector } from "app/app.module";
 
 export class AssetDropManager {
 
@@ -66,7 +67,7 @@ export class AssetDropManager {
 
 		} catch ( error ) {
 
-			SnackBar.instance?.error( "Something went wrong while importing asset" );
+			AppInjector?.get( SnackBar )?.error( "Something went wrong while importing asset" );
 
 			Log.error( error );
 
@@ -87,12 +88,12 @@ export class AssetDropManager {
 	canDropAsset ( asset: Asset, event: PointerEventData ): boolean {
 
 		if ( !this.isAssetSupported( asset ) ) {
-			SnackBar.instance?.warn( `Asset type: ${ asset.getTypeAsString() } not supported in this tool` );
+			AppInjector?.get( SnackBar )?.warn( `Asset type: ${ asset.getTypeAsString() } not supported in this tool` );
 			return false;
 		}
 
 		if ( !this.getHandler( asset )?.isLocationValid( asset, event ) ) {
-			SnackBar.instance?.warn( `Asset: ${ asset.getTypeAsString() } cannot be dropped at this location` );
+			AppInjector?.get( SnackBar )?.warn( `Asset: ${ asset.getTypeAsString() } cannot be dropped at this location` );
 			return false;
 		}
 

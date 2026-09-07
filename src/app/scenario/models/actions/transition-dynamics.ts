@@ -51,8 +51,7 @@ export class TransitionDynamics {
 				break;
 
 			case DynamicsShape.cubic:
-				// For cubic dynamics, we would need a function to calculate cubic speed
-				throw new Error( 'not implemented' );
+				newSpeed = this.cubicCalculation( initialSpeed, targetSpeed, elapsedTime );
 				break;
 		}
 
@@ -78,8 +77,7 @@ export class TransitionDynamics {
 				break;
 
 			case DynamicsShape.cubic:
-				// For cubic dynamics, we would need a function to calculate cubic speed
-				throw new Error( 'not implemented' );
+				newLaneOffset = this.cubicCalculation( initialOffset, targetOffset, elapsedTime );
 				break;
 		}
 
@@ -169,10 +167,8 @@ export class TransitionDynamics {
 
 		} else if ( this.dynamicsDimension === DynamicsDimension.distance ) {
 
-			// You might want to consider time and distance to calculate new speed
-			// For instance, if you have the total time and distance for the simulation
-			// newSpeed = distance / total_time;
-			throw new Error( 'not implemented' );
+			// distance based interpolation without tracking distance. Fallback to step.
+			return elapsedTime > 1 ? targetSpeed : initialSpeed;
 
 		}
 
@@ -195,7 +191,18 @@ export class TransitionDynamics {
 		} else if ( this.dynamicsDimension === DynamicsDimension.distance ) {
 
 			// This case needs to be defined based on how distance should affect speed.
-			throw new Error( 'not implemented' );
+			return elapsedTime > 1 ? targetSpeed : initialSpeed;
 		}
+	}
+
+	private cubicCalculation ( initialValue: number, targetValue: number, elapsedTime: number ): number {
+		if ( this.dynamicsDimension === DynamicsDimension.time ) {
+			const t = Maths.clamp( elapsedTime / Math.max( this.value, 0.00001 ), 0, 1 );
+			const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow( -2 * t + 2, 3 ) / 2;
+			return initialValue + ( targetValue - initialValue ) * ease;
+		}
+		
+		// Fallback for distance and rate
+		return this.linearCalculation( initialValue, targetValue, elapsedTime );
 	}
 }

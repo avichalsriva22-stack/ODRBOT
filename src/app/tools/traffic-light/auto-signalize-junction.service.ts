@@ -68,10 +68,10 @@ export class AutoSignalizeJunctionService {
 		// all go signalization is not needed
 		if ( type == AutoSignalizationType.ALL_GO ) return;
 
-		// TODO: instead of incoming roads, we need connecting road to have junctions
-		// currenlty we are using incoming roads
-		// because connecting roads are automatically created by the junction
-		for ( const road of junction.getIncomingRoads() ) {
+		const connectingRoads = junction.getConnections().map( c => c.connectingRoad );
+		const uniqueRoads = Array.from( new Set( connectingRoads ) );
+
+		for ( const road of uniqueRoads ) {
 
 			this.addSignalizationToRoad( road, type, junction );
 
@@ -222,6 +222,9 @@ export class AutoSignalizeJunctionService {
 		const shoulder = this.getLane( road, junction, TvLaneType.shoulder );
 		if ( shoulder ) return shoulder;
 
+		const driving = this.getLane( road, junction, TvLaneType.driving );
+		if ( driving ) return driving;
+
 	}
 
 	private getLane ( road: TvRoad, junction: TvJunction, laneType: TvLaneType ): TvLane {
@@ -301,7 +304,14 @@ export class AutoSignalizeJunctionService {
 
 		const drivingLanes = laneSection.getLanes().filter( lane => lane.type == TvLaneType.driving && lane.side == side ).map( lane => lane.id );
 
-		// TODO: this is not correct, we need to find the lane with the signal
+		if ( drivingLanes.length === 0 ) {
+			const placementLane = this.findPlacementLane( road, junction );
+			if ( placementLane ) {
+				signal.addValidity( placementLane.id, placementLane.id );
+			}
+			return;
+		}
+
 		const minLaneId = Math.min( ...drivingLanes );
 		const maxLaneId = Math.max( ...drivingLanes );
 
@@ -340,17 +350,23 @@ export class AutoSignalizeJunctionService {
 
 	private removeSignals ( junction: TvJunction ): void {
 
-		for ( const incomingRoad of junction.getIncomingRoads() ) {
+		const connectingRoads = junction.getConnections().map( c => c.connectingRoad );
+		const incomingRoads = junction.getIncomingRoads();
+		
+		const allRoads = [ ...incomingRoads, ...connectingRoads ];
+		const uniqueRoads = Array.from( new Set( allRoads ) );
 
-			const signals = incomingRoad.getRoadSignals().filter( signal => {
-				[ '206', '205', '294', '1000001' ].includes( signal.type );
+		for ( const road of uniqueRoads ) {
+
+			const signals = road.getRoadSignals().filter( signal => {
+				return [ '206', '205', '294', '1000001' ].includes( signal.type );
 			} );
 
 			for ( const signal of signals ) {
 
-				incomingRoad.removeRoadSignal( signal );
+				road.removeRoadSignal( signal );
 
-				MapEvents.roadSignalRemoved.emit( new RoadSignalRemovedEvent( incomingRoad, signal ) );
+				MapEvents.roadSignalRemoved.emit( new RoadSignalRemovedEvent( road, signal ) );
 
 			}
 		}

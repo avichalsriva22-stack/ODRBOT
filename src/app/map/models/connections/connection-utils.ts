@@ -16,11 +16,7 @@ const CROSS_PRODUCT_EPSILON = 1e-10; // threshold for zero determination
 
 export function determineTurnType ( entry: TvLaneCoord | TvRoadCoord, exit: TvLaneCoord | TvRoadCoord ): TurnType {
 
-	// TODO: for now, if spline is same then it is straight
-	// We can improve this later
-	if ( entry.road.spline.equals( exit.road.spline ) ) {
-		return TurnType.STRAIGHT;
-	}
+	// Removed hardcoded same-spline straight assumption to allow geometric curvature analysis
 
 	const entryPosition = entry.road.getPosThetaByContact( entry.contact );
 	const exitPosition = exit.road.getPosThetaByContact( exit.contact );

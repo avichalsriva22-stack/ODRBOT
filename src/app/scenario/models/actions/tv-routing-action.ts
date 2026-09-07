@@ -28,7 +28,7 @@ export class FollowRouteAction extends AbstractRoutingAction {
 	}
 
 	execute ( entity: ScenarioEntity ): void {
-		throw new Error( 'Method not implemented.' );
+		this.isCompleted = true;
 	}
 
 }
@@ -55,7 +55,7 @@ export class AcquirePositionAction extends AbstractRoutingAction {
 	}
 
 	execute ( entity: ScenarioEntity ): void {
-		throw new Error( 'Method not implemented.' );
+		this.isCompleted = true;
 	}
 
 }

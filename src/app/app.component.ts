@@ -17,6 +17,7 @@ import { LayoutService } from './views/shared/services/layout.service';
 import { RoutePartsService } from './views/shared/services/route-parts.service';
 import { ThemeService } from './views/shared/services/theme.service';
 import { Log } from './core/utils/log';
+import { AiTelemetryService } from './ai/services/ai-telemetry.service';
 
 @Component( {
 	selector: 'app-root',
@@ -39,7 +40,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 		private renderer: Renderer2,
 		private appService: AppService,
 		private analytics: AnalyticsService,
-		private translate: TranslateService
+		private translate: TranslateService,
+		private telemetry: AiTelemetryService
 	) {
 	}
 

@@ -6,7 +6,9 @@
 <div fxFlexFill
 	fxLayout="column">
 
-	<app-menu-bar></app-menu-bar>
+	<app-menu-bar (toggleAiPanel)="aiPanelExpanded = !aiPanelExpanded"></app-menu-bar>
+
+	<!-- AI chat panel will be placed in the flex layout below -->
 
 	<app-tool-bar></app-tool-bar>
 
@@ -14,11 +16,11 @@
 	<!-- this ensures object-inspector does not outgrow parent -->
 	<div fxFlex
 		fxLayout="row"
-		fxLayoutAlign="space-around"
+		fxLayoutAlign="space-between stretch"
 		fxLayoutGap="0px"
-		style="height: 500px; overflow: auto;">
+		style="height: 500px; overflow: hidden;">
 
-		<div fxFlex="76"
+		<div fxFlex
 			fxLayout="column"
 			fxLayoutAlign="space-around"
 			fxLayoutGap="0px">
@@ -36,26 +38,20 @@
 
 		</div>
 
-		<!--		<mat-toolbar fxFlex="2.8" class="vertical-toolbar">-->
-		<!--			<button mat-icon-button class="selected" matTooltip="Property Inspector" matTooltipPosition="left">-->
-		<!--				<mat-icon>tune</mat-icon>-->
-		<!--			</button>-->
-		<!--			<button mat-icon-button matTooltip="Map Inspector" matTooltipPosition="left">-->
-		<!--				<mat-icon>models</mat-icon>-->
-		<!--			</button>-->
-		<!--			<button mat-icon-button matTooltip="Scenario Inspector" matTooltipPosition="left">-->
-		<!--				<mat-icon>settings</mat-icon>-->
-		<!--			</button>-->
-		<!--		</mat-toolbar>-->
-
 		<div fxFlex="24" fxLayout="column" style="background: #333333;">
-
             <app-object-inspector class="app-object-inspector" [fxFlex]="inspectorHeight"></app-object-inspector>
-
             <app-graph-viewport *ngIf="isElevationToolOpened" [fxFlex]="graphHeight"></app-graph-viewport>
-
         </div>
 
+		<!-- AI chat panel, integrated cleanly into the layout -->
+		<app-ai-chat-panel
+			*ngIf="aiFeatureEnabled"
+			[class.collapsed]="!aiPanelExpanded"
+			[style.width.px]="aiPanelExpanded ? 340 : 40"
+			[style.minWidth.px]="aiPanelExpanded ? 340 : 40"
+			[style.flexBasis.px]="aiPanelExpanded ? 340 : 40"
+			(collapsedChange)="aiPanelExpanded = !aiPanelExpanded">
+		</app-ai-chat-panel>
 
 	</div>
 

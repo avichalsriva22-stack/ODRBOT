@@ -31,8 +31,6 @@ export class LaneWidthManager {
 
 		this.validateLane( lane );
 
-		return;
-
 		this.syncWithPredecessor( road, laneSection, lane );
 
 		this.syncWithSuccessor( road, laneSection, lane );
@@ -43,8 +41,6 @@ export class LaneWidthManager {
 
 		this.validateLane( lane );
 
-		return;
-
 		this.syncWithPredecessor( road, laneSection, lane );
 
 		this.syncWithSuccessor( road, laneSection, lane );
@@ -52,8 +48,6 @@ export class LaneWidthManager {
 	}
 
 	onLaneTypeChanged ( road: TvRoad, laneSection: TvLaneSection, lane: TvLane ): void {
-
-		return;
 
 		this.validateLane( lane );
 
@@ -123,7 +117,40 @@ export class LaneWidthManager {
 
 	private syncWithPredecessor ( road: TvRoad, laneSection: TvLaneSection, lane: TvLane, targetWidth?: number ): void {
 
-		// TODO: Implement this method
+		if ( road.isJunction ) return;
+		if ( !lane.predecessorExists ) return;
+
+		const sections = road.getLaneProfile().getLaneSections();
+		const index = sections.indexOf( laneSection );
+		const prevLaneSection = index > 0 ? sections[ index - 1 ] : null;
+		if ( !prevLaneSection ) return;
+
+		const predecessor = prevLaneSection.getLaneById( lane.predecessorId );
+		if ( !predecessor ) return;
+
+		const firstWidthNode = lane.getWidthArray()[ 0 ];
+		if ( !firstWidthNode ) return;
+
+		const prevEndWidth = predecessor.getWidthValue( prevLaneSection.getLength() );
+
+		if ( predecessor.id != lane.id ) {
+			// Smooth transition from 0 width
+			if ( firstWidthNode.s !== 0 ) {
+				lane.addWidthRecord( 0, 0, 0, 0, 0 );
+				lane.addWidthRecord( 10, targetWidth || this.getWidthByType(lane.type), 0, 0, 0 );
+			} else {
+				firstWidthNode.a = 0;
+				lane.addWidthRecord( 10, targetWidth || this.getWidthByType(lane.type), 0, 0, 0 );
+			}
+		} else {
+			if ( firstWidthNode.s !== 0 ) {
+				lane.addWidthRecord( 0, prevEndWidth, 0, 0, 0 );
+			} else {
+				firstWidthNode.a = prevEndWidth;
+			}
+		}
+
+		lane.updateWidthCoefficients();
 
 	}
 

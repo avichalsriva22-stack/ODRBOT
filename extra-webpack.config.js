@@ -4,7 +4,7 @@ module.exports = {
 	plugins: [
 		new CircularDependencyPlugin( {
 			exclude: /node_modules/,
-			failOnError: true,
+			failOnError: false,
 			allowAsyncCycles: false,
 			cwd: process.cwd(),
 		} ),

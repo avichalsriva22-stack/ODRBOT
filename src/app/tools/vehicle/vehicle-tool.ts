@@ -10,8 +10,12 @@ import { BaseSelectionStrategy } from 'app/core/strategies/select-strategies/sel
 import { MouseButton, PointerEventData } from 'app/events/pointer-event-data';
 import { EntityInspector } from 'app/scenario/inspectors/tv-entity-inspector/tv-entity-inspector.component';
 import { TeleportAction } from 'app/scenario/models/actions/tv-teleport-action';
-import { ScenarioEntity } from 'app/scenario/models/entities/scenario-entity';
+import { AbstractControlPoint } from 'app/objects/abstract-control-point';
 import { DynamicControlPoint } from 'app/objects/dynamic-control-point';
+import { BaseCommand } from 'app/commands/base-command';
+import { Vector3 } from 'three';
+import { MapEvents } from 'app/events/map-events';
+import { ScenarioEntity } from 'app/scenario/models/entities/scenario-entity';
 import { TvRoadCoord } from 'app/map/models/TvRoadCoord';
 import { CommandHistory } from 'app/commands/command-history';
 import { VehicleEntity } from '../../scenario/models/entities/vehicle-entity';
@@ -172,8 +176,7 @@ export class VehicleTool extends BaseTool<any> implements IToolWithPoint {
 
 		if ( position.distanceTo( this.pointerDownAt ) < 0.5 ) return;
 
-		// TODO: fix this
-		// CommandHistory.execute( new UpdatePositionCommand( this.point.mainObject, position, this.pointerDownAt ) );
+		CommandHistory.execute( new SetVehiclePositionCommand( this, this.point.mainObject, position, this.pointerDownAt ) );
 
 	}
 
@@ -197,4 +200,43 @@ export class VehicleTool extends BaseTool<any> implements IToolWithPoint {
 
 	}
 
+}
+
+export class SetVehiclePositionCommand extends BaseCommand {
+
+	private readonly oldPosition: Vector3;
+	private readonly newPosition: Vector3;
+
+	constructor (
+		private tool: VehicleTool,
+		private entity: ScenarioEntity,
+		newPosition: Vector3,
+		oldPosition: Vector3
+	) {
+		super();
+		this.newPosition = newPosition.clone();
+		this.oldPosition = oldPosition.clone();
+	}
+
+	execute (): void {
+		this.update( this.newPosition );
+	}
+
+	undo (): void {
+		this.update( this.oldPosition );
+	}
+
+	redo (): void {
+		this.execute();
+	}
+
+	private update ( position: Vector3 ): void {
+		const roadCoord = ( this.tool as any ).movingStrategy.onPointerDown( { point: position } );
+		if ( roadCoord ) {
+			this.tool.updateLocation( this.entity, roadCoord );
+			this.entity.setPosition( position );
+			this.entity.update();
+			MapEvents.objectUpdated.emit( this.entity );
+		}
+	}
 }

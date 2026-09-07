@@ -81,11 +81,16 @@ export class TvLineGeometry extends TvAbstractRoadGeometry {
 		// Debug.log( nearestPointOnRoad );
 
 		// s value is simply the distance from start to the nearestPointOnRoad
-		const s = ( new Vector2( this.x, this.y ) ).distanceTo( nearestPointOnRoad );
+		const start = new Vector2( this.x, this.y );
+		const s = start.distanceTo( nearestPointOnRoad );
 
-		// TODO: Find negative t value as well
-		// t value is simple the distance from nearPointOnRoad to object position
-		const t = nearestPointOnRoad.distanceTo( objPosition );
+		const lineDir = new Vector2( Math.cos( this.hdg ), Math.sin( this.hdg ) );
+		const toObj = new Vector2().subVectors( objPosition, start );
+		const cross = lineDir.x * toObj.y - lineDir.y * toObj.x;
+
+		// t value is the distance from nearPointOnRoad to object position, signed by cross product
+		const tMagnitude = nearestPointOnRoad.distanceTo( objPosition );
+		const t = cross >= 0 ? tMagnitude : -tMagnitude;
 
 		posTheta.s = s;
 		posTheta.t = t;

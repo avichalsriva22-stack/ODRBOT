@@ -34,46 +34,46 @@ export class LaneHeightManager {
 
 		this.createDefaultNodes( road, laneSection, lane );
 
-		return;
-
-		// TODO: Implement this
-
-		// if ( lane.height.length == 0 ) {
-		// 	return;
-		// }
-
-		// const succcessor = LaneUtils.getSuccessorLane( road, laneSection, lane );
-
-		// const predecessor = LaneUtils.getPredecessorLane( road, laneSection, lane );
-
-		// const lastHeight = lane.height[ lane.height.length - 1 ];
-
-		// if ( succcessor && lastHeight ) {
-
-		// 	this.sync( succcessor, lastHeight );
-
-		// }
-
-		// if ( predecessor ) {
-
-		// 	this.sync( predecessor, lane.getHeightValue( 0 ) );
-
-		// }
-
-	}
-
-	private sync ( otherLane: TvLane, height: TvLaneHeight ): void {
-
-		if ( otherLane.height.length == 0 ) {
-
-			otherLane.addHeightRecordInstance( height.clone() );
-
+		if ( lane.height.length == 0 ) {
 			return;
 		}
 
-		const otherLaneHeight = otherLane.height.find( ( h: TvLaneHeight ) => h.sOffset >= height.sOffset );
+		const succcessor = lane.getSuccessorLane();
+		const predecessor = lane.getPredecessorLane();
 
-		otherLaneHeight?.copyHeight( otherLaneHeight );
+		const lastHeight = lane.height[ lane.height.length - 1 ];
+		const firstHeight = lane.height[ 0 ];
+
+		if ( succcessor && lastHeight ) {
+			this.syncSuccessor( succcessor, lastHeight );
+		}
+
+		if ( predecessor && firstHeight ) {
+			this.syncPredecessor( predecessor, firstHeight );
+		}
+
+	}
+
+	private syncSuccessor ( successor: TvLane, height: TvLaneHeight ): void {
+
+		if ( successor.height.length == 0 ) {
+			const clone = height.clone();
+			clone.sOffset = 0;
+			successor.addHeightRecordInstance( clone );
+			return;
+		}
+
+		const successorFirstHeight = successor.height[0];
+		successorFirstHeight?.copyHeight( height );
+
+	}
+
+	private syncPredecessor ( predecessor: TvLane, height: TvLaneHeight ): void {
+
+		if ( predecessor.height.length == 0 ) return;
+
+		const predecessorLastHeight = predecessor.height[ predecessor.height.length - 1 ];
+		predecessorLastHeight?.copyHeight( height );
 
 	}
 

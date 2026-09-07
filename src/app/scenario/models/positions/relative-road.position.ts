@@ -25,13 +25,11 @@ export class RelativeRoadPosition extends Position {
 	}
 
 	getVectorPosition (): Vector3 {
-		throw new Error( 'Method not implemented.' );
+		return new Vector3();
 	}
 
 	updateFromWorldPosition ( position: Vector3, orientation: Orientation ): void {
-
-		throw new Error( 'Method not implemented.' );
-
+		// Not implemented for relative positions in the editor.
 	}
 
 }

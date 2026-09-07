@@ -8,6 +8,7 @@ import { AbstractFactory } from "../interfaces/abstract-factory";
 import { ILaneNodeFactory } from "../interfaces/lane-element.factory";
 import { PropPolygonFactory } from "../../map/prop-polygon/prop-polygon.factory";
 import { PropPointFactory } from "../../map/prop-point/prop-point.factory";
+import { PropCurveFactory } from "../../modules/prop-curve/services/prop-curve.factory";
 import { AssetManager } from "../../assets/asset.manager";
 import { LaneHeightFactory } from 'app/map/lane-height/lane-height.factory';
 import { AssetService } from '../../assets/asset.service';
@@ -30,6 +31,12 @@ export class FactoryServiceProvider {
 		switch ( type ) {
 			case ToolType.PropPoint:
 				factory = new PropPointFactory();
+				break;
+			case ToolType.PropCurve:
+				factory = new PropCurveFactory();
+				break;
+			case ToolType.PropPolygon:
+				factory = new PropPolygonFactory();
 				break;
 
 			default:
